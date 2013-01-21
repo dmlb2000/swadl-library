@@ -1,0 +1,57 @@
+<project name="MyEMSLUploader" basedir="." default="main">
+
+    <property name="lib.dir"     value="lib"/>
+    <property name="src.dir"     value="src"/>
+
+    <property name="build.dir"   value="build"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="tests.dir"   value="${build.dir}/tests"/>
+    <property name="jar.dir"     value="${build.dir}/jar"/>
+    <property name="report.dir"  value="${build.dir}/junitreport"/>
+
+    <path id="classpath">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+        <fileset dir="${jar.dir}" includes="**/*.jar"/>
+    </path>
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <target name="compile" depends="compile-main"/>
+
+    <target name="compile-main">
+	<mkdir dir="${build.dir}"/>
+        <mkdir dir="${classes.dir}"/>
+	<mkdir dir="${jar.dir}" />
+        <javac srcdir="src" destdir="${classes.dir}" classpathref="classpath"/>
+    </target>
+
+    <target name="jar" depends="jar-main"/>
+
+    <target name="jar-main" depends="compile-main">
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}" id="library"/>
+    </target>
+
+    <target name="junit" depends="jar">
+        <mkdir dir="${report.dir}"/>
+        <junit printsummary="yes">
+            <classpath>
+                <path refid="classpath"/>
+		<pathelement path="${jar.dir}/${ant.project.name}.jar"/>
+            </classpath>
+            <formatter type="xml"/>
+            <batchtest fork="yes" todir="${report.dir}">
+                <fileset dir="${src.dir}" includes="**/*Test.java"/>
+            </batchtest>
+        </junit>
+    </target>
+    <target name="junitreport" depends="junit">
+        <junitreport todir="${report.dir}">
+            <fileset dir="${report.dir}" includes="TEST-*.xml"/>
+            <report todir="${report.dir}"/>
+        </junitreport>
+    </target>
+
+</project>
