@@ -2,6 +2,8 @@ package gov.pnnl.emsl.my;
 
 import gov.pnnl.emsl.my.MyEMSLConfig;
 
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.security.KeyStore;
@@ -16,6 +18,8 @@ import java.security.cert.X509Certificate;
 import java.security.cert.CertificateException;
 import javax.net.ssl.SSLContext;
 
+import org.apache.http.util.EntityUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -40,6 +44,19 @@ public class MyEMSLConnect {
 	DefaultHttpClient client;
 	HttpContext localContext;
 	CookieStore cookieStore;
+
+	private String read_http_entity(HttpEntity entity) throws IOException {
+		String ret = "";
+		if (entity != null) {
+			BufferedReader br = new BufferedReader(new InputStreamReader(entity.getContent()));
+			String readLine;
+			while(((readLine = br.readLine()) != null)) {
+				ret += readLine;
+			}
+		}
+		EntityUtils.consume(entity);
+		return ret;
+	}
 
 	public MyEMSLConnect(MyEMSLConfig config, String username, String password) throws GeneralSecurityException, URISyntaxException, IOException {
 		/* this sets up a pass through trust manager which is rather insecure
@@ -70,6 +87,7 @@ public class MyEMSLConnect {
 		);
 		localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
 		HttpResponse response = client.execute(httpget, localContext);
+		this.read_http_entity(response.getEntity());
 	}
 
 	public String get_myemsl_session() {
@@ -88,5 +106,6 @@ public class MyEMSLConnect {
 	public void logout() throws IOException {
 		HttpGet httpget = new HttpGet(config.logouturl());
 		HttpResponse response = client.execute(httpget, localContext);
+		this.read_http_entity(response.getEntity());
 	}
 };
