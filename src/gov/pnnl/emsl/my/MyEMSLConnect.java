@@ -10,6 +10,12 @@ import java.lang.String;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.net.ssl.X509TrustManager;
+import javax.net.ssl.TrustManager;
+import java.security.cert.X509Certificate;
+import java.security.cert.CertificateException;
+import javax.net.ssl.SSLContext;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -33,19 +39,30 @@ public class MyEMSLConnect {
 
 	DefaultHttpClient client;
 	HttpContext localContext;
+	CookieStore cookieStore;
 
 	public MyEMSLConnect(MyEMSLConfig config, String username, String password) throws GeneralSecurityException, URISyntaxException, IOException {
+		/* this sets up a pass through trust manager which is rather insecure
+		 * we need to figure out why the default keystore isn't working with
+		 * the SSL cert we have on our production systems */
+		X509TrustManager tm = new X509TrustManager() {
+			public void checkClientTrusted(X509Certificate[] xcs, String string) throws CertificateException {}
+			public void checkServerTrusted(X509Certificate[] xcs, String string) throws CertificateException {}
+			public X509Certificate[] getAcceptedIssuers() { return null; }
+		};
+		SSLContext null_ctx = SSLContext.getInstance("TLS");
+		null_ctx.init(null, new TrustManager[]{tm}, null);
 		/* initialize SSL for https */
 		KeyStore trustStore  = KeyStore.getInstance(KeyStore.getDefaultType());
-		SSLSocketFactory socketFactory = new SSLSocketFactory(trustStore);
+		SSLSocketFactory socketFactory = new SSLSocketFactory(null_ctx);
 		Scheme sch = new Scheme("https", 443, socketFactory);
 		/* make a place to store the cookies */
-		CookieStore cookieStore = new BasicCookieStore();
-		localContext = new BasicHttpContext();
+		this.cookieStore = new BasicCookieStore();
+		this.localContext = new BasicHttpContext();
 		/* create the target host */
-		config = config;
+		this.config = config;
 		HttpGet httpget = new HttpGet(config.loginurl());
-		client = new DefaultHttpClient();
+		this.client = new DefaultHttpClient();
 		client.getConnectionManager().getSchemeRegistry().register(sch);
 		client.getCredentialsProvider().setCredentials(
 			new AuthScope(config.server(), AuthScope.ANY_PORT),
@@ -55,9 +72,20 @@ public class MyEMSLConnect {
 		HttpResponse response = client.execute(httpget, localContext);
 	}
 
-	@Override
-	protected void finalize() throws Throwable {
-		super.finalize();
+	public String get_myemsl_session() {
+		int i;
+		for(i = 0; i < cookieStore.getCookies().size(); i++) {
+			System.out.format("%s=%s\n",
+				cookieStore.getCookies().get(i).getName().trim(),
+				cookieStore.getCookies().get(i).getValue().trim());
+			if(cookieStore.getCookies().get(i).getName().trim().equals(new String("myemsl_session"))) {
+				return cookieStore.getCookies().get(i).getValue();
+			}
+		}
+		return null;
+	}
+
+	public void logout() throws IOException {
 		HttpGet httpget = new HttpGet(config.logouturl());
 		HttpResponse response = client.execute(httpget, localContext);
 	}
