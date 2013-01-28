@@ -31,6 +31,16 @@ public class MyEMSLConfig {
 		return proto + "://" + this.server();
 	}
 
+	public String finishurl() {
+		String finish_path = prefs.node("client").get("finish", "myemsl/cgi-bin/finish");
+		return this.baseurl() + "/" + finish_path;
+	}
+
+	public String preallocurl() {
+		String prealloc_path = prefs.node("client").get("prealloc", "myemsl/cgi-bin/preallocate");
+		return this.baseurl() + "/" + prealloc_path;
+	}
+
 	public String logouturl() {
 		String baseurl = this.baseurl();
 		String logout_path = prefs.node("client").get("logout", "myemsl/logout");

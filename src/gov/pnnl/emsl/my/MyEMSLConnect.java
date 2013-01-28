@@ -1,9 +1,14 @@
 package gov.pnnl.emsl.my;
 
 import gov.pnnl.emsl.my.MyEMSLConfig;
+import gov.pnnl.emsl.my.MyEMSLFileCollection;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.security.KeyStore;
@@ -87,6 +92,12 @@ public class MyEMSLConnect {
 		);
 		localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
 		HttpResponse response = client.execute(httpget, localContext);
+		Integer resCode = response.getStatusLine().getStatusCode() % 100;
+		switch (resCode) {
+			case 2: break;
+			case 4:
+			case 5: /* throw error */ break;
+		}
 		this.read_http_entity(response.getEntity());
 	}
 
@@ -101,6 +112,21 @@ public class MyEMSLConnect {
 			}
 		}
 		return null;
+	}
+
+	public void upload(MyEMSLFileCollection fcol) {
+		File temp;
+		temp = File.createTempFile("temp",".tar");
+		temp.deleteOnExit();
+		FileWriter writer = new FileWriter(temp);
+		md.tarit(writer);
+		writer.close();
+
+		HttpRequest httpRequest = new HttpPut(config.preallocurl());
+		InputStreamEntity entity = new FileEntity(temp, "application/tar");
+		httpRequest.setEntity(entity);
+		HttpResponse response = client.execute(httpRequest);
+		this.read_http_entity(response.getEntity());
 	}
 
 	public void logout() throws IOException {

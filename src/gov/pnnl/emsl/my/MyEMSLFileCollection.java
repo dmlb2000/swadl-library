@@ -17,15 +17,13 @@ import java.security.NoSuchAlgorithmException;
 import org.apache.commons.codec.binary.Hex;
 
 public class MyEMSLFileCollection {
-	OutputStream out;
 	MyEMSLMetadata md;
 
-	public MyEMSLFileCollection(OutputStream out, MyEMSLMetadata md) {
-		this.out = out;
+	public MyEMSLFileCollection(MyEMSLMetadata md) {
 		this.md = md;
 	}
 
-	public void tarit() throws IOException, FileNotFoundException, NoSuchAlgorithmException {
+	public void tarit(OutputStream out) throws IOException, FileNotFoundException, NoSuchAlgorithmException {
 		TarOutputStream out = new TarOutputStream( new BufferedOutputStream( this.out ) );
 		MessageDigest cript = MessageDigest.getInstance("SHA-1");
 		for(MyEMSLFileMD f:md.md.file) {

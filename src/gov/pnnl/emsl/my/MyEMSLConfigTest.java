@@ -40,5 +40,11 @@ public class MyEMSLConfigTest extends junit.framework.TestCase {
 	public void testlogin() throws IOException {
 		assert test.loginurl() == "https://a4.my.emsl.pnl.gov/myemsl/auth";
 	}
+	public void testprealloc() throws IOException {
+		assert test.preallocurl() == "https://a4.my.emsl.pnl.gov/myemsl/cgi-bin/preallocate";
+	}
+	public void testfinish() throws IOException {
+		assert test.finishurl() == "https://a4.my.emsl.pnl.gov/myemsl/cgi-bin/finish";
+	}
 
 }
