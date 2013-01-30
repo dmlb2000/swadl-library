@@ -26,7 +26,7 @@ public class MyEMSLFileCollectionTest extends junit.framework.TestCase {
 		md.md.file.add(bfmd);
 
 		FileOutputStream dest = new FileOutputStream( "/tmp/test.tar" );
-		col = new MyEMSLFileCollection(dest, md);
-		col.tarit();
+		col = new MyEMSLFileCollection(md);
+		col.tarit(dest);
 	}
 }

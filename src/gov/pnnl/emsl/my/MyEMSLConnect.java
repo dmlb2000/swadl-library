@@ -3,16 +3,19 @@ package gov.pnnl.emsl.my;
 import gov.pnnl.emsl.my.MyEMSLConfig;
 import gov.pnnl.emsl.my.MyEMSLFileCollection;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.security.KeyStore;
 import java.security.GeneralSecurityException;
+import java.security.NoSuchAlgorithmException;
 import java.lang.String;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -25,6 +28,8 @@ import javax.net.ssl.SSLContext;
 
 import org.apache.http.util.EntityUtils;
 import org.apache.http.HttpEntity;
+import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.entity.FileEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -114,18 +119,23 @@ public class MyEMSLConnect {
 		return null;
 	}
 
-	public void upload(MyEMSLFileCollection fcol) {
+	public void upload(MyEMSLFileCollection fcol) throws IOException, NoSuchAlgorithmException {
 		File temp;
 		temp = File.createTempFile("temp",".tar");
 		temp.deleteOnExit();
-		FileWriter writer = new FileWriter(temp);
-		md.tarit(writer);
-		writer.close();
+		FileOutputStream ostream = new FileOutputStream(temp);
+		fcol.tarit(ostream);
+		ostream.close();
 
-		HttpRequest httpRequest = new HttpPut(config.preallocurl());
-		InputStreamEntity entity = new FileEntity(temp, "application/tar");
-		httpRequest.setEntity(entity);
-		HttpResponse response = client.execute(httpRequest);
+		HttpGet get_prealloc = new HttpGet(config.preallocurl());
+		HttpResponse response = client.execute(get_prealloc, localContext);
+		String prealloc_file = this.read_http_entity(response.getEntity());
+		System.out.println(prealloc_file);
+
+		HttpPut put_file = new HttpPut(prealloc_file);
+		FileEntity entity = new FileEntity(temp, "application/tar");
+		put_file.setEntity(entity);
+		response = client.execute(put_file, localContext);
 		this.read_http_entity(response.getEntity());
 	}
 
