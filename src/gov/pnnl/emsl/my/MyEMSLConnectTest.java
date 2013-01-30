@@ -22,9 +22,9 @@ public class MyEMSLConnectTest extends junit.framework.TestCase {
 		temp = File.createTempFile("temp",".ini");
 		temp.deleteOnExit();
 		BufferedWriter writer = new BufferedWriter(new FileWriter(temp));
-		writer.write("[client]\nproto=https\nserver=a4.my.emsl.pnl.gov\nservices=myemsl/services\n");
+		writer.write("[client]\nproto=https\nserver=192.168.122.128\nservices=myemsl/services\n");
 		writer.close();
-		test = new MyEMSLConnect(new MyEMSLConfig(temp.getAbsolutePath()), "dmlb2000", "!Bota99Chev");
+		test = new MyEMSLConnect(new MyEMSLConfig(temp.getAbsolutePath()), "dmlb2000", "dmlb336");
 		assert test.get_myemsl_session() != null;
 		test.logout();
 	}

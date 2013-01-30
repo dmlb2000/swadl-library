@@ -37,6 +37,8 @@
     <target name="junit" depends="jar">
         <mkdir dir="${report.dir}"/>
         <junit printsummary="yes">
+            <sysproperty key="javax.net.ssl.trustStore" value="./my_keystore" />
+            <sysproperty key="javax.net.ssl.trustStorePassword" value="changeit" />
             <classpath>
                 <path refid="classpath"/>
 		<pathelement path="${jar.dir}/${ant.project.name}.jar"/>

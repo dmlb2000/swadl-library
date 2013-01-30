@@ -39,6 +39,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
@@ -82,6 +83,7 @@ public class MyEMSLConnect {
 		/* initialize SSL for https */
 		KeyStore trustStore  = KeyStore.getInstance(KeyStore.getDefaultType());
 		SSLSocketFactory socketFactory = new SSLSocketFactory(null_ctx);
+		socketFactory.setHostnameVerifier((X509HostnameVerifier) org.apache.http.conn.ssl.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
 		Scheme sch = new Scheme("https", 443, socketFactory);
 		/* make a place to store the cookies */
 		this.cookieStore = new BasicCookieStore();
