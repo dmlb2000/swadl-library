@@ -44,7 +44,8 @@ public class MyEMSLConfigTest extends junit.framework.TestCase {
 		assert test.preallocurl() == "https://a4.my.emsl.pnl.gov/myemsl/cgi-bin/preallocate";
 	}
 	public void testfinish() throws IOException {
-		assert test.finishurl() == "https://a4.my.emsl.pnl.gov/myemsl/cgi-bin/finish";
+		/* this is relative to which ever uploader you happen to hit */
+		assert test.finishurl() == "/myemsl/cgi-bin/finish";
 	}
 
 }

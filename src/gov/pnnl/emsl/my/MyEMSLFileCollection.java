@@ -28,8 +28,8 @@ public class MyEMSLFileCollection {
 		MessageDigest cript = MessageDigest.getInstance("SHA-1");
 		for(MyEMSLFileMD f:md.md.file) {
 			cript.reset();
-			File fd = new File(f.destinationDirectory + f.filename);
-			tarout.putNextEntry(new TarEntry(fd, f.destinationDirectory + f.filename));
+			File fd = new File(f.destinationDirectory + "/" + f.fileName);
+			tarout.putNextEntry(new TarEntry(fd, f.destinationDirectory + "/" + f.fileName));
 			BufferedInputStream origin = new BufferedInputStream(new FileInputStream( new File(f.localFilePath) ));
 			int count;
 			byte data[] = new byte[2048];
@@ -42,7 +42,7 @@ public class MyEMSLFileCollection {
 			origin.close();
 		}
 		byte jsonbytes[] = this.md.tojson().getBytes("UTF-8");
-		tarout.putNextEntry(new TarEntry(TarHeader.createHeader("metadata.txt", jsonbytes.length, 0, false)));
+		tarout.putNextEntry(new TarEntry(TarHeader.createHeader("metadata.txt", jsonbytes.length, System.currentTimeMillis()/1000-60, false)));
 		tarout.write(jsonbytes, 0, jsonbytes.length);
 		tarout.flush();
 		tarout.close();

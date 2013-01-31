@@ -33,7 +33,7 @@ public class MyEMSLConfig {
 
 	public String finishurl() {
 		String finish_path = prefs.node("client").get("finish", "myemsl/cgi-bin/finish");
-		return this.baseurl() + "/" + finish_path;
+		return "/"+finish_path;
 	}
 
 	public String preallocurl() {

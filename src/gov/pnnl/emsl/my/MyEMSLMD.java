@@ -10,6 +10,7 @@ import java.util.List;
 
 public class MyEMSLMD {
 	public List<MyEMSLFileMD> file;
+	public String version = "1.0.0";
 
 	public MyEMSLMD() {
 		file = new ArrayList<MyEMSLFileMD>();

@@ -12,11 +12,13 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ByteArrayInputStream;
 import java.net.ConnectException;
 import java.security.KeyStore;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.lang.String;
+import java.lang.InterruptedException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -45,6 +47,21 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 public class MyEMSLConnect {
 
 	MyEMSLConfig config;
@@ -62,7 +79,7 @@ public class MyEMSLConnect {
 			BufferedReader br = new BufferedReader(new InputStreamReader(entity.getContent()));
 			String readLine;
 			while(((readLine = br.readLine()) != null)) {
-				ret += readLine;
+				ret += readLine + "\n";
 			}
 		}
 		EntityUtils.consume(entity);
@@ -121,7 +138,7 @@ public class MyEMSLConnect {
 		return null;
 	}
 
-	public void upload(MyEMSLFileCollection fcol) throws IOException, NoSuchAlgorithmException {
+	public String upload(MyEMSLFileCollection fcol) throws IOException, NoSuchAlgorithmException {
 		File temp;
 		temp = File.createTempFile("temp",".tar");
 		temp.deleteOnExit();
@@ -132,13 +149,53 @@ public class MyEMSLConnect {
 		HttpGet get_prealloc = new HttpGet(config.preallocurl());
 		HttpResponse response = client.execute(get_prealloc, localContext);
 		String prealloc_file = this.read_http_entity(response.getEntity());
-		System.out.println(prealloc_file);
+		for(String s:prealloc_file.split("\n")) {
+			System.out.println(s);
+		}
+		String server = prealloc_file.split("\n")[0];
+		String location = prealloc_file.split("\n")[1];
+		server = server.split(": ")[1];
+		location = location.split(": ")[1];
 
-		HttpPut put_file = new HttpPut(prealloc_file);
-		FileEntity entity = new FileEntity(temp, "application/tar");
+		HttpPut put_file = new HttpPut("https://"+server+location);
+		FileEntity entity = new FileEntity(temp);
 		put_file.setEntity(entity);
 		response = client.execute(put_file, localContext);
 		this.read_http_entity(response.getEntity());
+
+		HttpGet get_finish = new HttpGet("https://"+server+config.finishurl()+location);
+		response = client.execute(get_finish, localContext);
+		String status_url = this.read_http_entity(response.getEntity());
+		status_url = status_url.split("\n")[0].split(": ")[1];
+
+		System.out.println(status_url+"/xml");
+		return status_url+"/xml";
+	}
+
+	public void status_wait(String status_url, Integer timeout, Integer level) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, InterruptedException {
+		String status = "NA";
+		String msg = "NA";
+		Integer time_check = 0;
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder db = dbf.newDocumentBuilder();
+		XPath xPath = XPathFactory.newInstance().newXPath();
+		while(time_check < timeout && status != "SUCCESS")
+		{
+			HttpGet get_status = new HttpGet(status_url);
+			HttpResponse response = client.execute(get_status, localContext);
+			String statusxml = this.read_http_entity(response.getEntity());
+			System.out.println(statusxml);
+			Document doc = db.parse(new ByteArrayInputStream(statusxml.getBytes("UTF-8")));
+			XPathExpression status_xpath = xPath.compile("/myemsl/status/step/[id='"+level.toString()+"']");
+			NodeList nodeList = (NodeList)status_xpath.evaluate(doc, XPathConstants.NODESET);
+			for(int i=0; i<nodeList.getLength(); i++)
+			{
+				Node childNode = nodeList.item(i);
+				System.out.println(childNode.toString());
+			}
+			Thread.sleep(1 * 1000);
+			time_check++;
+		}
 	}
 
 	public void logout() throws IOException {

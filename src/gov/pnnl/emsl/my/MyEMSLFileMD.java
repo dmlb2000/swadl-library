@@ -11,7 +11,7 @@ import java.util.List;
 
 public class MyEMSLFileMD {
 	public String sha1Hash;
-	public String filename;
+	public String fileName;
 	public String destinationDirectory;
 	public String localFilePath;
 	public List<MyEMSLGroupMD> groups;
@@ -20,8 +20,8 @@ public class MyEMSLFileMD {
 		File f = new File(filename);
 		this.sha1Hash = hash;
 		this.localFilePath = localpath;
-		this.filename = f.getName();
-		this.destinationDirectory = f.getParent()+"/";
+		this.fileName = f.getName();
+		this.destinationDirectory = f.getParent();
 		this.groups = new ArrayList<MyEMSLGroupMD>();
 	}
 }
