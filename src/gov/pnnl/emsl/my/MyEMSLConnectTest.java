@@ -50,9 +50,9 @@ public class MyEMSLConnectTest extends junit.framework.TestCase {
 		MyEMSLFileMD afmd = new MyEMSLFileMD("test/a", "test/a", "hashforfilea");
 		MyEMSLFileMD bfmd = new MyEMSLFileMD("test/b", "test/b", "hashforfilea");
 
-		afmd.groups.add(new MyEMSLGroupMD("45765", "proposal"));
+		afmd.groups.add(new MyEMSLGroupMD("45796", "proposal"));
 		afmd.groups.add(new MyEMSLGroupMD("abc_1234", "JGI.ID"));
-		bfmd.groups.add(new MyEMSLGroupMD("45765", "proposal"));
+		bfmd.groups.add(new MyEMSLGroupMD("45796", "proposal"));
 		bfmd.groups.add(new MyEMSLGroupMD("abc_1235", "JGI.ID"));
 
 		md = new MyEMSLMetadata();

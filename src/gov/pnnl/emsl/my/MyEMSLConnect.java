@@ -179,23 +179,23 @@ public class MyEMSLConnect {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		XPath xPath = XPathFactory.newInstance().newXPath();
-		while(time_check < timeout && status != "SUCCESS")
+		while(time_check < timeout && !status.equals("SUCCESS"))
 		{
 			HttpGet get_status = new HttpGet(status_url);
 			HttpResponse response = client.execute(get_status, localContext);
 			String statusxml = this.read_http_entity(response.getEntity());
-			System.out.println(statusxml);
 			Document doc = db.parse(new ByteArrayInputStream(statusxml.getBytes("UTF-8")));
-			XPathExpression status_xpath = xPath.compile("/myemsl/status/step/[id='"+level.toString()+"']");
+			XPathExpression status_xpath = xPath.compile("//step[@id='"+level.toString()+"']/@status");
 			NodeList nodeList = (NodeList)status_xpath.evaluate(doc, XPathConstants.NODESET);
 			for(int i=0; i<nodeList.getLength(); i++)
 			{
 				Node childNode = nodeList.item(i);
-				System.out.println(childNode.toString());
+				status = childNode.getNodeValue();
 			}
 			Thread.sleep(1 * 1000);
 			time_check++;
 		}
+		if(time_check == timeout) { throw new InterruptedException("Unable to check for completed upload status."); }
 	}
 
 	public void logout() throws IOException {
