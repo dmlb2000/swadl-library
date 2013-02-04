@@ -1,4 +1,4 @@
-<project name="MyEMSLUploader" basedir="." default="main">
+<project name="MyEMSLClient" basedir="." default="main">
 
     <property name="lib.dir"     value="lib"/>
     <property name="src.dir"     value="src"/>
@@ -32,6 +32,23 @@
     <target name="jar-main" depends="compile-main">
         <mkdir dir="${jar.dir}"/>
         <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}" id="library"/>
+    </target>
+
+    <target name="jar-release" depends="compile-main">
+        <jar destfile="${jar.dir}/${ant.project.name}-release.jar" basedir="${classes.dir}">
+            <zipfileset src="${lib.dir}/commons-codec-1.7.jar" includes="**/*.java **/*.class"/>
+            <zipfileset src="${lib.dir}/commons-logging-1.1.1.jar" includes="**/*.java **/*.class"/>
+            <zipfileset src="${lib.dir}/fluent-hc-4.2.3.jar" includes="**/*.java **/*.class"/>
+            <zipfileset src="${lib.dir}/gson-2.2.2.jar" includes="**/*.java **/*.class"/>
+            <zipfileset src="${lib.dir}/httpclient-4.2.3.jar" includes="**/*.java **/*.class"/>
+            <zipfileset src="${lib.dir}/httpclient-cache-4.2.3.jar" includes="**/*.java **/*.class"/>
+            <zipfileset src="${lib.dir}/httpcore-4.2.3.jar" includes="**/*.java **/*.class"/>
+            <zipfileset src="${lib.dir}/httpcore-ab-4.2.3.jar" includes="**/*.java **/*.class"/>
+            <zipfileset src="${lib.dir}/httpcore-nio-4.2.3.jar" includes="**/*.java **/*.class"/>
+            <zipfileset src="${lib.dir}/httpmime-4.2.3.jar" includes="**/*.java **/*.class"/>
+            <zipfileset src="${lib.dir}/ini4j-0.5.2.jar" includes="**/*.java **/*.class"/>
+            <zipfileset src="${lib.dir}/jtar-2.2.jar" includes="**/*.java **/*.class"/>
+        </jar>
     </target>
 
     <target name="junit" depends="jar">
