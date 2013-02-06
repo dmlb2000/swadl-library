@@ -53,6 +53,20 @@ public class MyEMSLConfig {
 		return baseurl + "/" + login_path;
 	}
 
+	public String itemurl() {
+		return this.baseurl() + "/myemsl/item/foo/bar";
+	}
+
+	public String itemauthurl() {
+		return this.baseurl() + "/myemsl/itemauth";
+	}
+
+	public String queryurl() {
+		String proto = prefs.node("client").get("proto", "https");
+		String qserver = prefs.node("client").get("query_server", "a3.my.emsl.pnl.gov");
+		return proto + "://"+qserver+"/myemsl/query";
+	}
+
 	public String server() {
 		return prefs.node("client").get("server", "my.emsl.pnl.gov");
 	}

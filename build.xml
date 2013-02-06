@@ -48,6 +48,7 @@
             <zipfileset src="${lib.dir}/httpmime-4.2.3.jar" includes="**/*.java **/*.class"/>
             <zipfileset src="${lib.dir}/ini4j-0.5.2.jar" includes="**/*.java **/*.class"/>
             <zipfileset src="${lib.dir}/jtar-2.2.jar" includes="**/*.java **/*.class"/>
+            <zipfileset src="${lib.dir}/javatuples-1.2.jar" includes="**/*.java **/*.class"/>
         </jar>
     </target>
 

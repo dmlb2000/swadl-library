@@ -19,7 +19,7 @@ import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.lang.String;
 import java.lang.InterruptedException;
-import java.net.URI;
+import java.net.URL;
 import java.net.URISyntaxException;
 
 import javax.net.ssl.X509TrustManager;
@@ -47,6 +47,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 
+import org.javatuples.Pair;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -62,6 +64,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
 public class MyEMSLConnect {
 
 	MyEMSLConfig config;
@@ -73,20 +79,33 @@ public class MyEMSLConnect {
 	HttpContext localContext;
 	CookieStore cookieStore;
 
-	private String read_http_entity(HttpEntity entity) throws IOException {
+	DocumentBuilder db;
+	XPath xPath;
+
+
+	private String read_http_entity(HttpEntity entity, BufferedWriter out = null) throws IOException {
 		String ret = "";
+		char buf[1024];
+		Integer got = 0, total = 0;
 		if (entity != null) {
 			BufferedReader br = new BufferedReader(new InputStreamReader(entity.getContent()));
 			String readLine;
-			while(((readLine = br.readLine()) != null)) {
-				ret += readLine + "\n";
+			while(((got = br.read(buf, 0, 1024)) != -1)) {
+				total += got;
+				if(out != null) {
+					out.write(buf, 0, got);
+				} else {
+					ret += new String(buf);
+				}
 			}
 		}
 		EntityUtils.consume(entity);
+		if(out != null)
+			return total.toString();
 		return ret;
 	}
 
-	public MyEMSLConnect(MyEMSLConfig config, String username, String password) throws GeneralSecurityException, URISyntaxException, IOException {
+	public MyEMSLConnect(MyEMSLConfig config, String username, String password) throws GeneralSecurityException, URISyntaxException, IOException, ParserConfigurationException {
 		/* this sets up a pass through trust manager which is rather insecure
 		 * we need to figure out why the default keystore isn't working with
 		 * the SSL cert we have on our production systems */
@@ -102,6 +121,9 @@ public class MyEMSLConnect {
 		SSLSocketFactory socketFactory = new SSLSocketFactory(null_ctx);
 		socketFactory.setHostnameVerifier((X509HostnameVerifier) org.apache.http.conn.ssl.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
 		Scheme sch = new Scheme("https", 443, socketFactory);
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		this.db = dbf.newDocumentBuilder();
+		this.xPath = XPathFactory.newInstance().newXPath();
 		/* make a place to store the cookies */
 		this.cookieStore = new BasicCookieStore();
 		this.localContext = new BasicHttpContext();
@@ -172,20 +194,17 @@ public class MyEMSLConnect {
 		return status_url+"/xml";
 	}
 
-	public void status_wait(String status_url, Integer timeout, Integer level) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, InterruptedException {
+	public void status_wait(String status_url, Integer timeout, Integer level) throws IOException, SAXException, XPathExpressionException, InterruptedException {
 		String status = "NA";
 		String msg = "NA";
 		Integer time_check = 0;
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		DocumentBuilder db = dbf.newDocumentBuilder();
-		XPath xPath = XPathFactory.newInstance().newXPath();
 		while(time_check < timeout && !status.equals("SUCCESS"))
 		{
 			HttpGet get_status = new HttpGet(status_url);
 			HttpResponse response = client.execute(get_status, localContext);
 			String statusxml = this.read_http_entity(response.getEntity());
-			Document doc = db.parse(new ByteArrayInputStream(statusxml.getBytes("UTF-8")));
-			XPathExpression status_xpath = xPath.compile("//step[@id='"+level.toString()+"']/@status");
+			Document doc = this.db.parse(new ByteArrayInputStream(statusxml.getBytes("UTF-8")));
+			XPathExpression status_xpath = this.xPath.compile("//step[@id='"+level.toString()+"']/@status");
 			NodeList nodeList = (NodeList)status_xpath.evaluate(doc, XPathConstants.NODESET);
 			for(int i=0; i<nodeList.getLength(); i++)
 			{
@@ -196,6 +215,71 @@ public class MyEMSLConnect {
 			time_check++;
 		}
 		if(time_check == timeout) { throw new InterruptedException("Unable to check for completed upload status."); }
+	}
+
+	public ArrayList<Pair<Integer,String>> query(List<MyEMSLGroupMD> groups) throws IOException, SAXException, XPathExpressionException {
+		ArrayList<Integer> ret = new ArrayList<Integer>();
+		String url = config.queryurl();
+		for(MyEMSLGroupMD g: groups) {
+			url += "/group/"+g.type+"/"+g.name;
+		}
+		url += "/data";
+		System.out.println(url);
+		ArrayList<Pair<Integer,String>> files = new ArrayList<Pair<Integer,String>>();
+		this.getrec(files, new URL(url));
+		return files;
+	}
+
+	private void getrec(ArrayList<Pair<Integer,String>> ret, URL url) throws IOException, SAXException, XPathExpressionException {
+		for(URL d: this.getdirs(url))
+			this.getrec(ret, d);
+		ret.addAll(this.getfiles(url));
+	}
+
+	private ArrayList<URL> getdirs(URL url) throws IOException, SAXException, XPathExpressionException {
+		ArrayList<URL> ret = new ArrayList<URL>();
+		NodeList nodeList = getxpath(url, "/myemsl-readdir/dir/@name");
+		for(int i=0; i<nodeList.getLength(); i++)
+		{
+			Node childNode = nodeList.item(i);
+			ret.add(new URL(url.toString() + "/"+ childNode.getNodeValue()));
+		}
+		return ret;
+	}
+
+	private ArrayList<Pair<Integer,String>> getfiles(URL url) throws IOException, SAXException, XPathExpressionException {
+		ArrayList<Pair<Integer,String>> ret = new ArrayList<Pair<Integer,String>>();
+		NodeList nodeList = getxpath(url, "/myemsl-readdir/file");
+		for(int i=0; i < nodeList.getLength(); i++) {
+			Node childNode = nodeList.item(i);
+			NamedNodeMap attrs = childNode.getAttributes();
+			String filename = url.toString().substring(url.toString().indexOf("/data/")+6, url.toString().length());
+			Integer itemid = new Integer(attrs.getNamedItem("itemid").getNodeValue());
+			filename += "/"+attrs.getNamedItem("name").getNodeValue();
+			ret.add(new Pair(itemid, filename));
+		}
+		return ret;
+	}
+
+	private NodeList getxpath(URL url, String xpath) throws IOException, SAXException, XPathExpressionException {
+		ArrayList<URL> ret = new ArrayList<URL>();
+		HttpGet get_query = new HttpGet(url.toString());
+		HttpResponse response = client.execute(get_query, localContext);
+		String queryxml = this.read_http_entity(response.getEntity());
+		System.out.println(queryxml);
+		Document doc = this.db.parse(new ByteArrayInputStream(queryxml.getBytes("UTF-8")));
+		XPathExpression query_xpath = this.xPath.compile(xpath);
+		NodeList nodeList = (NodeList)query_xpath.evaluate(doc, XPathConstants.NODESET);
+		return nodeList;
+	}
+
+	public void getitem(BufferedWriter bwout, Pair<Integer,String> item) throws IOException, SAXException, XPathExpressionException {
+		HttpGet get_iauth = new HttpGet(config.itemauthurl()+"/"+item.getValue0().toString());
+		HttpResponse response = client.execute(get_iauth, localContext);
+		String token = this.read_http_entity(response.getEntity());
+		HttpGet get_item = new HttpGet(config.itemurl()+"/"+item.getValue0()+"/"+item.getValue1()+"?token="+token);
+		response = client.execute(get_item, localContext);
+		
 	}
 
 	public void logout() throws IOException {

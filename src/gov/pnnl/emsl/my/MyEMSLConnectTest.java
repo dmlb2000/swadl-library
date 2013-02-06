@@ -16,12 +16,16 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 import javax.xml.xpath.XPathExpressionException;
 import java.lang.InterruptedException;
+import org.javatuples.Pair;
+import java.util.ArrayList;
+import java.util.List;
+import java.net.URL;
 
 public class MyEMSLConnectTest extends junit.framework.TestCase {
 
 	public MyEMSLConnectTest() { }
 
-	public void testconnect() throws IOException, GeneralSecurityException, URISyntaxException {
+	public void testconnect() throws IOException, GeneralSecurityException, URISyntaxException,  ParserConfigurationException {
 		MyEMSLConnect test;
 		File temp;
 		temp = File.createTempFile("temp",".ini");
@@ -63,6 +67,31 @@ public class MyEMSLConnectTest extends junit.framework.TestCase {
 		col = new MyEMSLFileCollection(md);
 		test.status_wait(test.upload(col), 15, 5);
 		test.logout();
+	}
+
+	public void testquery() throws IOException, GeneralSecurityException, URISyntaxException, ParserConfigurationException, SAXException, XPathExpressionException {
+		MyEMSLConnect test;
+		File temp, output;
+
+                temp = File.createTempFile("temp",".ini");
+                temp.deleteOnExit();
+                BufferedWriter writer = new BufferedWriter(new FileWriter(temp));
+                writer.write("[client]\nproto=https\nquery_server=192.168.122.128\nserver=192.168.122.128\nservices=myemsl/services\n");
+                writer.close();
+                test = new MyEMSLConnect(new MyEMSLConfig(temp.getAbsolutePath()), "dmlb2000", "dmlb336");
+
+		ArrayList<MyEMSLGroupMD> qset = new ArrayList<MyEMSLGroupMD>();
+		qset.add(new MyEMSLGroupMD("45796", "proposal"));
+		qset.add(new MyEMSLGroupMD("abc_1234", "JGI.ID"));
+
+		ArrayList<Pair<Integer,String>> items = test.query(qset);
+		for(Pair<Integer,String> i: items) {
+			output = File.createTempFile("output", ".txt");
+			output.deleteOnExit();
+			BufferedWriter bwout = new BufferedWriter(new FileWriter(output));
+			test.getitem(bwout, i);
+			bwout.close();
+		}
 	}
 }
 

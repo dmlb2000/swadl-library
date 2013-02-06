@@ -47,5 +47,11 @@ public class MyEMSLConfigTest extends junit.framework.TestCase {
 		/* this is relative to which ever uploader you happen to hit */
 		assert test.finishurl() == "/myemsl/cgi-bin/finish";
 	}
-
+	public void testquery() throws IOException {
+		assert test.queryurl() == "https://a3.my.emsl.pnl.gov/myemsl/query";
+	}
+	public void testitemurl() throws IOException {
+		assert test.itemauthurl() == "https://a4.my.emsl.pnl.gov/myemsl/itemauth";
+		assert test.itemurl() == "https://a4.my.emsl.pnl.gov/myemsl/item/foo/bar";
+	}
 }
