@@ -31,7 +31,11 @@
 
     <target name="jar-main" depends="compile-main">
         <mkdir dir="${jar.dir}"/>
-        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}" id="library"/>
+        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}" id="library">
+            <manifest>
+                <attribute name="Main-Class" value="gov.pnnl.emsl.my.MyEMSLMain"/>
+            </manifest>
+        </jar>
     </target>
 
     <target name="jar-release" depends="compile-main">
@@ -49,6 +53,7 @@
             <zipfileset src="${lib.dir}/ini4j-0.5.2.jar" includes="**/*.java **/*.class"/>
             <zipfileset src="${lib.dir}/jtar-2.2.jar" includes="**/*.java **/*.class"/>
             <zipfileset src="${lib.dir}/javatuples-1.2.jar" includes="**/*.java **/*.class"/>
+            <zipfileset src="${lib.dir}/commons-cli-1.2.jar" includes="**/*.java **/*.class"/>
         </jar>
     </target>
 
