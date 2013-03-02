@@ -16,7 +16,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 import javax.xml.xpath.XPathExpressionException;
 import java.lang.InterruptedException;
-import org.javatuples.Pair;
+import org.javatuples.Triplet;
 import java.util.ArrayList;
 import java.util.List;
 import java.net.URL;
@@ -84,10 +84,14 @@ public class MyEMSLConnectTest extends junit.framework.TestCase {
 		qset.add(new MyEMSLGroupMD("45796", "proposal"));
 		qset.add(new MyEMSLGroupMD("abc_1234", "JGI.ID"));
 
-		ArrayList<Pair<Integer,String>> items = test.query(qset);
-		for(Pair<Integer,String> i: items) {
+		/*
+		 * should be an array of (itemid, path, authtoken).
+		 */
+		ArrayList<Triplet<Integer,String,String>> items = test.query(qset);
+		for(Triplet<Integer,String,String> i: items) {
+			System.out.println(i.getValue1());
 			output = File.createTempFile("output", ".txt");
-			output.deleteOnExit();
+			//output.deleteOnExit();
 			BufferedWriter bwout = new BufferedWriter(new FileWriter(output));
 			test.getitem(bwout, i);
 			bwout.close();
