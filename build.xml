@@ -54,6 +54,9 @@
             <zipfileset src="${lib.dir}/jtar-2.2.jar" includes="**/*.java **/*.class"/>
             <zipfileset src="${lib.dir}/javatuples-1.2.jar" includes="**/*.java **/*.class"/>
             <zipfileset src="${lib.dir}/commons-cli-1.2.jar" includes="**/*.java **/*.class"/>
+            <manifest>
+                <attribute name="Main-Class" value="gov.pnnl.emsl.my.MyEMSLMain"/>
+            </manifest>
         </jar>
     </target>
 

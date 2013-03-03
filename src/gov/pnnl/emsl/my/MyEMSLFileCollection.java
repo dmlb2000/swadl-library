@@ -28,8 +28,14 @@ public class MyEMSLFileCollection {
 		MessageDigest cript = MessageDigest.getInstance("SHA-1");
 		for(MyEMSLFileMD f:md.md.file) {
 			cript.reset();
-			File fd = new File(f.destinationDirectory + "/" + f.fileName);
-			tarout.putNextEntry(new TarEntry(fd, f.destinationDirectory + "/" + f.fileName));
+			File fd = null;
+			if(!f.destinationDirectory.equals("")) {
+				fd = new File(f.destinationDirectory + "/" + f.fileName);
+				tarout.putNextEntry(new TarEntry(fd, f.destinationDirectory + "/" + f.fileName));
+			} else {
+				fd = new File(f.fileName);
+				tarout.putNextEntry(new TarEntry(fd, f.fileName));
+			}
 			BufferedInputStream origin = new BufferedInputStream(new FileInputStream( new File(f.localFilePath) ));
 			int count;
 			byte data[] = new byte[2048];

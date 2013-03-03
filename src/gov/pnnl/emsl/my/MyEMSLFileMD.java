@@ -22,6 +22,7 @@ public class MyEMSLFileMD {
 		this.localFilePath = localpath;
 		this.fileName = f.getName();
 		this.destinationDirectory = f.getParent();
+		if(this.destinationDirectory == null) { this.destinationDirectory = ""; }
 		this.groups = new ArrayList<MyEMSLGroupMD>();
 	}
 }

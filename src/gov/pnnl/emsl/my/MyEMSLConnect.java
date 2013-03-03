@@ -180,9 +180,6 @@ public class MyEMSLConnect {
 		HttpGet get_prealloc = new HttpGet(config.preallocurl());
 		HttpResponse response = client.execute(get_prealloc, localContext);
 		String prealloc_file = this.read_http_entity(response.getEntity());
-		for(String s:prealloc_file.split("\n")) {
-			System.out.println(s);
-		}
 		String server = prealloc_file.split("\n")[0];
 		String location = prealloc_file.split("\n")[1];
 		server = server.split(": ")[1];
@@ -264,14 +261,14 @@ public class MyEMSLConnect {
 		for(int i=0; i < nodeList.getLength(); i++) {
 			Node childNode = nodeList.item(i);
 			NamedNodeMap attrs = childNode.getAttributes();
-			String filename = url.toString().substring(url.toString().indexOf("/data/")+6, url.toString().length());
+			System.out.println(url.toString());
+			String filename = url.toString().substring(url.toString().indexOf("/data")+5, url.toString().length());
 			Integer itemid = new Integer(attrs.getNamedItem("itemid").getNodeValue());
 			filename += "/"+attrs.getNamedItem("name").getNodeValue();
 			Integer authidx = new Integer(attrs.getNamedItem("authidx").getNodeValue());
 			NodeList authtlist = getxpath_from_xml(xml, "/myemsl-readdir/auth/token");
 			Node authNode = authtlist.item(authidx);
 			String authtoken = authNode.getFirstChild().getNodeValue();
-			System.out.println(authtoken.toString());
 			ret.add(new Triplet(itemid, filename, authtoken));
 		}
 		return ret;
@@ -295,7 +292,6 @@ public class MyEMSLConnect {
 	}
 
 	private NodeList getxpath_from_xml(String xml, String xpath) throws SAXException, XPathExpressionException, UnsupportedEncodingException, IOException {
-		System.out.println(xml);
 		Document doc = this.db.parse(new ByteArrayInputStream(xml.getBytes("UTF-8")));
 		XPathExpression query_xpath = this.xPath.compile(xpath);
 		NodeList nodeList = (NodeList)query_xpath.evaluate(doc, XPathConstants.NODESET);
