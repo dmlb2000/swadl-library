@@ -12,7 +12,7 @@ import java.util.List;
 public class MyEMSLMetadata {
 
 	Gson gson;
-	MyEMSLMD md;
+	public MyEMSLMD md;
 
 	public MyEMSLMetadata() { this.gson = new Gson(); this.md = new MyEMSLMD(); }
 

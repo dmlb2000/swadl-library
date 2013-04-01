@@ -30,13 +30,13 @@ public class MyEMSLFileCollection {
 			cript.reset();
 			File fd = null;
 			if(!f.destinationDirectory.equals("")) {
-				fd = new File(f.destinationDirectory + "/" + f.fileName);
+				fd = new File(f.localFilePath);
 				tarout.putNextEntry(new TarEntry(fd, f.destinationDirectory + "/" + f.fileName));
 			} else {
-				fd = new File(f.fileName);
+				fd = new File(f.localFilePath);
 				tarout.putNextEntry(new TarEntry(fd, f.fileName));
 			}
-			BufferedInputStream origin = new BufferedInputStream(new FileInputStream( new File(f.localFilePath) ));
+			BufferedInputStream origin = new BufferedInputStream(new FileInputStream(fd));
 			int count;
 			byte data[] = new byte[2048];
 			while((count = origin.read(data)) != -1) {

@@ -11,12 +11,12 @@ import org.ini4j.IniPreferences;
 public class MyEMSLConfig {
 	IniPreferences prefs;
 
-	MyEMSLConfig() throws IOException {
+	public MyEMSLConfig() throws IOException {
 		Ini config = new Ini(new File("/etc/myemsl/general.ini"));
 		prefs = new IniPreferences(config);
 	}
 
-	MyEMSLConfig(String filename) throws IOException {
+	public MyEMSLConfig(String filename) throws IOException {
 		Ini config = new Ini(new File(filename));
 		prefs = new IniPreferences(config);
 	}

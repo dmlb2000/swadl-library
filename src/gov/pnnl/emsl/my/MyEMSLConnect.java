@@ -194,8 +194,11 @@ public class MyEMSLConnect {
 		HttpGet get_finish = new HttpGet("https://"+server+config.finishurl()+location);
 		response = client.execute(get_finish, localContext);
 		String status_url = this.read_http_entity(response.getEntity());
-		status_url = status_url.split("\n")[0].split(": ")[1];
-
+		for(String line:status_url.split("\n")) {
+			System.out.println(line);
+			if(line.startsWith("Status: "))
+				status_url = line.split(": ")[1];
+		}
 		System.out.println(status_url+"/xml");
 		return status_url+"/xml";
 	}
