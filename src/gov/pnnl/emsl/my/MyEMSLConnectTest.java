@@ -51,8 +51,8 @@ public class MyEMSLConnectTest extends junit.framework.TestCase {
                 writer.close();
                 test = new MyEMSLConnect(new MyEMSLConfig(temp.getAbsolutePath()), "dmlb2000", "dmlb336");
 
-		MyEMSLFileMD afmd = new MyEMSLFileMD("test/a", "test/a", "hashforfilea");
-		MyEMSLFileMD bfmd = new MyEMSLFileMD("test/b", "test/b", "hashforfilea");
+		MyEMSLFileMD afmd = new MyEMSLFileMD("test"+File.separator+"a", "test"+File.separator+"a", "hashforfilea");
+		MyEMSLFileMD bfmd = new MyEMSLFileMD("test"+File.separator+"b", "test"+File.separator+"b", "hashforfilea");
 
 		afmd.groups.add(new MyEMSLGroupMD("45796", "proposal"));
 		afmd.groups.add(new MyEMSLGroupMD("abc_1234", "JGI.ID"));
@@ -63,7 +63,6 @@ public class MyEMSLConnectTest extends junit.framework.TestCase {
 		md.md.file.add(afmd);
 		md.md.file.add(bfmd);
 
-		FileOutputStream dest = new FileOutputStream( "/tmp/test.tar" );
 		col = new MyEMSLFileCollection(md);
 		test.status_wait(test.upload(col), 15, 5);
 		test.logout();
