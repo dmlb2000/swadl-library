@@ -17,40 +17,40 @@ import java.security.NoSuchAlgorithmException;
 import org.apache.commons.codec.binary.Hex;
 
 public class MyEMSLFileCollection {
-	MyEMSLMetadata md;
+    MyEMSLMetadata md;
 
-	public MyEMSLFileCollection(MyEMSLMetadata md) {
-		this.md = md;
-	}
+    public MyEMSLFileCollection(MyEMSLMetadata md) {
+        this.md = md;
+    }
 
-	public void tarit(OutputStream out) throws IOException, FileNotFoundException, NoSuchAlgorithmException {
-		TarOutputStream tarout = new TarOutputStream( new BufferedOutputStream( out ) );
-		MessageDigest cript = MessageDigest.getInstance("SHA-1");
-		for(MyEMSLFileMD f:md.md.file) {
-			cript.reset();
-			File fd = null;
-			if(!f.destinationDirectory.equals("")) {
-				fd = new File(f.localFilePath);
-				tarout.putNextEntry(new TarEntry(fd, f.destinationDirectory + "/" + f.fileName));
-			} else {
-				fd = new File(f.localFilePath);
-				tarout.putNextEntry(new TarEntry(fd, f.fileName));
-			}
-			BufferedInputStream origin = new BufferedInputStream(new FileInputStream(fd));
-			int count;
-			byte data[] = new byte[2048];
-			while((count = origin.read(data)) != -1) {
-				cript.update(data);
-				tarout.write(data, 0, count);
-			}
-			f.sha1Hash = new String(Hex.encodeHex(cript.digest()));
-			tarout.flush();
-			origin.close();
-		}
-		byte jsonbytes[] = this.md.tojson().getBytes("UTF-8");
-		tarout.putNextEntry(new TarEntry(TarHeader.createHeader("metadata.txt", jsonbytes.length, System.currentTimeMillis()/1000-60, false)));
-		tarout.write(jsonbytes, 0, jsonbytes.length);
-		tarout.flush();
-		tarout.close();
-	}
+    public void tarit(OutputStream out) throws IOException, FileNotFoundException, NoSuchAlgorithmException {
+        TarOutputStream tarout = new TarOutputStream( new BufferedOutputStream( out ) );
+        MessageDigest cript = MessageDigest.getInstance("SHA-1");
+        for(MyEMSLFileMD f:md.md.file) {
+            cript.reset();
+            File fd = null;
+            if(!f.destinationDirectory.equals("")) {
+                fd = new File(f.localFilePath);
+                tarout.putNextEntry(new TarEntry(fd, f.destinationDirectory + "/" + f.fileName));
+            } else {
+                fd = new File(f.localFilePath);
+                tarout.putNextEntry(new TarEntry(fd, f.fileName));
+            }
+            BufferedInputStream origin = new BufferedInputStream(new FileInputStream(fd));
+            int count;
+            byte data[] = new byte[2048];
+            while((count = origin.read(data)) != -1) {
+                cript.update(data);
+                tarout.write(data, 0, count);
+            }
+            f.sha1Hash = new String(Hex.encodeHex(cript.digest()));
+            tarout.flush();
+            origin.close();
+        }
+        byte jsonbytes[] = this.md.tojson().getBytes("UTF-8");
+        tarout.putNextEntry(new TarEntry(TarHeader.createHeader("metadata.txt", jsonbytes.length, System.currentTimeMillis()/1000-60, false)));
+        tarout.write(jsonbytes, 0, jsonbytes.length);
+        tarout.flush();
+        tarout.close();
+    }
 }

@@ -11,10 +11,10 @@ import java.util.List;
 
 public class MyEMSLMetadata {
 
-	Gson gson;
-	public MyEMSLMD md;
+    Gson gson;
+    public MyEMSLMD md;
 
-	public MyEMSLMetadata() { this.gson = new Gson(); this.md = new MyEMSLMD(); }
+    public MyEMSLMetadata() { this.gson = new Gson(); this.md = new MyEMSLMD(); }
 
-	public String tojson() { return this.gson.toJson(this.md); }
+    public String tojson() { return this.gson.toJson(this.md); }
 }

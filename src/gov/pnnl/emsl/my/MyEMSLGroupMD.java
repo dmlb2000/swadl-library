@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyEMSLGroupMD {
-	public String name;
-	public String type;
+    public String name;
+    public String type;
 
-	public MyEMSLGroupMD(String name, String type) {
-		this.name = name;
-		this.type = type;
-	}
+    public MyEMSLGroupMD(String name, String type) {
+        this.name = name;
+        this.type = type;
+    }
 }
 
