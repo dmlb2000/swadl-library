@@ -280,9 +280,17 @@ public class MyEMSLConnect {
     }
 
     /**
-     *
-     * @param groups
-     * @return
+     * Query function should take a list of MyEMSLGroupMD and return a List of
+     * files that match those groups.
+     * 
+     * This is a little more complex since the files really are the itemid,
+     * the name of the file and the auth token to get the file. That's why
+     * a list of triples are returned.
+     * 
+     * TODO: update this method to use elastic search query engine.
+     * 
+     * @param groups Metadata groups to query the server.
+     * @return list of triples of itemid, file name and authentication.
      * @throws IOException
      * @throws SAXException
      * @throws XPathExpressionException
@@ -362,12 +370,32 @@ public class MyEMSLConnect {
         return nodeList;
     }
 
+    /**
+     * This method should pull a particular file from the server and download it
+     * to the buffered writer.
+     * 
+     * This one is pretty easy just pull the itemurl and send the appropriate
+     * info to it and get the file.
+     * 
+     * @param bwout output to write the file to.
+     * @param item triple of an itemid, file name and authentication.
+     * @throws IOException
+     * @throws SAXException
+     * @throws XPathExpressionException
+     */
     public void getitem(BufferedWriter bwout, Triplet<Integer,String,String> item) throws IOException, SAXException, XPathExpressionException {
         HttpGet get_item = new HttpGet(config.itemurl()+"/"+item.getValue0()+"/"+item.getValue1()+"?token="+item.getValue2());
         HttpResponse response = client.execute(get_item, localContext);
         String bread = this.read_http_entity(response.getEntity(), bwout);
     }
 
+    /**
+     * Logout of the system.
+     * 
+     * This should be used before the program exits.
+     * 
+     * @throws IOException
+     */
     public void logout() throws IOException {
         HttpGet httpget = new HttpGet(config.logouturl());
         HttpResponse response = client.execute(httpget, localContext);
