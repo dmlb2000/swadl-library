@@ -1,5 +1,11 @@
 package gov.pnnl.emsl.my;
 
+import gov.pnnl.emsl.my.MyEMSLFileMD;
+import gov.pnnl.emsl.my.MyEMSLFileMD;
+import gov.pnnl.emsl.my.MyEMSLGroupMD;
+import gov.pnnl.emsl.my.MyEMSLGroupMD;
+import gov.pnnl.emsl.my.MyEMSLMetadata;
+import gov.pnnl.emsl.my.MyEMSLMetadata;
 import org.junit.Test;
 
 /**
