@@ -1,27 +1,19 @@
 package gov.pnnl.emsl.my;
 
-import gov.pnnl.emsl.my.MyEMSLConnect;
-import gov.pnnl.emsl.my.MyEMSLConfig;
 
-import java.lang.String;
 import java.io.File;
 import java.io.Console;
 import java.io.IOException;
-import java.lang.System;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.io.FileOutputStream;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.net.URISyntaxException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 import javax.xml.xpath.XPathExpressionException;
-import java.lang.InterruptedException;
 import org.javatuples.Triplet;
 import java.util.ArrayList;
-import java.util.List;
-import java.net.URL;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.CommandLine;
@@ -30,16 +22,37 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.HelpFormatter;
 
+/**
+ * This is the main class to have a main method.
+ * 
+ * This should be command line driven main function and take arguments that
+ * span all aspects of the library. However, the main function is to either
+ * upload or download data.
+ * 
+ * @author dmlb2000
+ */
 public class MyEMSLMain {
+    /**
+     * Main method does mostly option parsing and setting up some initial
+     * variables to pass onto the upload or download methods.
+     * 
+     * @param args Array of strings containing the command line arguments.
+     * @throws IOException
+     * @throws GeneralSecurityException
+     * @throws URISyntaxException
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     * @throws NoSuchAlgorithmException
+     * @throws XPathExpressionException
+     * @throws InterruptedException
+     */
     public static void main(String[] args) throws IOException, GeneralSecurityException, URISyntaxException, ParserConfigurationException, SAXException, NoSuchAlgorithmException, XPathExpressionException, InterruptedException {
-        String username = "NOT_A_USER";
+        String username;
         String server = "my.emsl.pnl.gov";
         String qserver = "my.emsl.pnl.gov";
-        String destination = "NOT_A_DIRECTORY";
         MyEMSLConnect conn;
 
         File config;
-        File tarfile;
 
         Options options = new Options();
         options.addOption( OptionBuilder
@@ -124,9 +137,6 @@ public class MyEMSLMain {
         if ( line.hasOption("s") ) {
             server = line.getOptionValue("s");
         }
-        if ( line.hasOption("d") ) {
-            destination = line.getOptionValue("d");
-        }
         if ( ! line.hasOption("group") ) {
             System.err.println("no groups failing stupidly");
             return;
@@ -164,7 +174,6 @@ public class MyEMSLMain {
     }
 
     private static void doUpload(MyEMSLConnect conn, CommandLine line) throws IOException, SAXException, ParserConfigurationException, SAXException, NoSuchAlgorithmException, XPathExpressionException, InterruptedException {
-        File tarfile;
         MyEMSLFileCollection col;
         MyEMSLMetadata md;
 
@@ -191,7 +200,7 @@ public class MyEMSLMain {
         String destdir = line.getOptionValue("d");
         File ofile;
         File odir;
-        ArrayList<MyEMSLGroupMD> qset = new ArrayList<MyEMSLGroupMD>();
+        ArrayList<MyEMSLGroupMD> qset = new ArrayList<>();
 
         for(String g:line.getOptionValues("group")) {
             qset.add(new MyEMSLGroupMD(g.split("=")[1], g.split("=")[0]));

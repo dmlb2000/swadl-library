@@ -2,8 +2,17 @@ package gov.pnnl.emsl.my;
 
 import org.junit.Test;
 
+/**
+ * Metadata object testing consist of making sure the metadata text exists.
+ * @author dmlb2000
+ */
 public class MyEMSLMetadataTest extends junit.framework.TestCase {
-        @Test
+    /**
+     * Test the metadata json bits by creating a bunch of fake metadata and
+     * files then calling the tojson method to make sure it does something
+     * and doesn't throw an error.
+     */
+    @Test
     public void testthings() {
         MyEMSLMetadata md = new MyEMSLMetadata();
         MyEMSLFileMD afmd = new MyEMSLFileMD("test/a", "/tmp/test/a", "hashforfilea");
