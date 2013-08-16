@@ -13,14 +13,21 @@ import java.util.List;
  * @author dmlb2000
  */
 public class MyEMSLMD {
+    /**
+     * file is a list of files and the associated metadata for those files.
+     */
     public List<MyEMSLFileMD> file;
-    public String version = "1.0.0";
+    /**
+     * version is a specific string required by the upload API.
+     */
+    public String version;
 
     /**
      * Constructor initializes internal file list.
      */
     public MyEMSLMD() {
-        file = new ArrayList<MyEMSLFileMD>();
+        this.version = "1.0.0";
+        file = new ArrayList<>();
     }
 }
 

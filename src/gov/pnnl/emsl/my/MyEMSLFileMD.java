@@ -15,10 +15,25 @@ import java.util.List;
  * @author dmlb2000
  */
 public class MyEMSLFileMD {
+    /**
+     * sha1Hash should contain the sha1sum for the file.
+     */
     public String sha1Hash;
+    /**
+     * fileName is the string containing the basename of the file.
+     */
     public String fileName;
+    /**
+     * destinationDirectory is the dirname of the file.
+     */
     public String destinationDirectory;
+    /**
+     * localFilePath is the local path of the file on the file system.
+     */
     public String localFilePath;
+    /**
+     * groups are the metadata groups for the file.
+     */
     public List<MyEMSLGroupMD> groups;
 
     /**

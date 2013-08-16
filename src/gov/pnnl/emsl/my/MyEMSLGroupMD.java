@@ -7,7 +7,13 @@ package gov.pnnl.emsl.my;
  * @author dmlb2000
  */
 public class MyEMSLGroupMD {
+    /**
+     * Name is the user defined value of the metadata pair.
+     */
     public String name;
+    /**
+     * type is the system defined set of keys for the metadata pair.
+     */
     public String type;
 
     /**

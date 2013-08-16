@@ -11,6 +11,9 @@ import com.google.gson.Gson;
 public class MyEMSLMetadata {
 
     Gson gson;
+    /**
+     * This is the metadata that gets turned into JSON.
+     */
     public MyEMSLMD md;
 
     /**
