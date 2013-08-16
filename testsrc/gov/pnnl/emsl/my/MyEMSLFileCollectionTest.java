@@ -14,7 +14,7 @@ import org.junit.Test;
  * 
  * @author dmlb2000
  */
-public class MyEMSLFileCollectionTest extends junit.framework.TestCase {
+public class MyEMSLFileCollectionTest {
     
     /**
      * Call the tarit method to see if it throws an error.
@@ -26,8 +26,7 @@ public class MyEMSLFileCollectionTest extends junit.framework.TestCase {
      * @throws FileNotFoundException
      * @throws NoSuchAlgorithmException
      */
-    @Test
-    public void testcol() throws IOException, FileNotFoundException, NoSuchAlgorithmException {
+    @Test public void collection() throws IOException, FileNotFoundException, NoSuchAlgorithmException {
         MyEMSLFileCollection col;
         MyEMSLMetadata md;
         MyEMSLFileMD afmd = new MyEMSLFileMD("test/a", "test/a", "hashforfilea");

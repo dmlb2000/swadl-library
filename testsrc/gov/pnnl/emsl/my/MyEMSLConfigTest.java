@@ -12,7 +12,7 @@ import org.junit.Test;
  * 
  * @author dmlb2000
  */
-public class MyEMSLConfigTest extends junit.framework.TestCase {
+public class MyEMSLConfigTest {
     MyEMSLConfig test;
     File temp;
 
@@ -35,8 +35,7 @@ public class MyEMSLConfigTest extends junit.framework.TestCase {
      * Test that the server function is returning the hostname we gave it.
      * @throws IOException
      */
-    @Test
-    public void testserver() throws IOException {
+    @Test public void server() throws IOException {
         assert test.server().equals("a4.my.emsl.pnl.gov");
     }
 
@@ -45,8 +44,7 @@ public class MyEMSLConfigTest extends junit.framework.TestCase {
      * appropriate format.
      * @throws IOException
      */
-    @Test
-    public void testbaseurl() throws IOException {
+    @Test public void baseurl() throws IOException {
         assert test.baseurl().equals("https://a4.my.emsl.pnl.gov");
     }
 
@@ -55,8 +53,7 @@ public class MyEMSLConfigTest extends junit.framework.TestCase {
      * API URL.
      * @throws IOException
      */
-    @Test
-    public void testservices() throws IOException {
+    @Test public void services() throws IOException {
         assert test.services().equals("https://a4.my.emsl.pnl.gov/myemsl/services");
     }
 
@@ -64,8 +61,7 @@ public class MyEMSLConfigTest extends junit.framework.TestCase {
      * Test that the logout URL is returned from the logouturl method.
      * @throws IOException
      */
-    @Test
-    public void testlogout() throws IOException {
+    @Test public void logout() throws IOException {
         assert test.logouturl().equals("https://a4.my.emsl.pnl.gov/myemsl/logout");
     }
     
@@ -73,8 +69,7 @@ public class MyEMSLConfigTest extends junit.framework.TestCase {
      * Test that the login URL is returned from the loginurl method.
      * @throws IOException
      */
-    @Test
-    public void testlogin() throws IOException {
+    @Test public void login() throws IOException {
         assert test.loginurl().equals("https://a4.my.emsl.pnl.gov/myemsl/auth");
     }
     
@@ -82,8 +77,7 @@ public class MyEMSLConfigTest extends junit.framework.TestCase {
      * Test that the prealloc URL is returned from the preallocurl method.
      * @throws IOException
      */
-    @Test
-    public void testprealloc() throws IOException {
+    @Test public void prealloc() throws IOException {
         assert test.preallocurl().equals("https://a4.my.emsl.pnl.gov/myemsl/cgi-bin/preallocate");
     }
     
@@ -91,8 +85,7 @@ public class MyEMSLConfigTest extends junit.framework.TestCase {
      * Test that the finish URL is returned from the finishurl method.
      * @throws IOException
      */
-    @Test
-    public void testfinish() throws IOException {
+    @Test public void finish() throws IOException {
         /* this is relative to which ever uploader you happen to hit */
         assert test.finishurl().equals("/myemsl/cgi-bin/finish");
     }
@@ -101,8 +94,7 @@ public class MyEMSLConfigTest extends junit.framework.TestCase {
      * Test that the query URL is returned from the queryurl method.
      * @throws IOException
      */
-    @Test
-    public void testquery() throws IOException {
+    @Test public void query() throws IOException {
         assert test.queryurl().equals("https://a3.my.emsl.pnl.gov/myemsl/query");
     }
     
@@ -111,8 +103,7 @@ public class MyEMSLConfigTest extends junit.framework.TestCase {
      * methods.
      * @throws IOException
      */
-    @Test
-    public void testitemurl() throws IOException {
+    @Test public void itemurl() throws IOException {
         assert test.itemauthurl().equals("https://a4.my.emsl.pnl.gov/myemsl/itemauth");
         assert test.itemurl().equals("https://a4.my.emsl.pnl.gov/myemsl/item/foo/bar");
     }

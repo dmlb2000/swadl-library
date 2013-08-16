@@ -22,7 +22,7 @@ import org.junit.Test;
  * 
  * @author dmlb2000
  */
-@Ignore public class MyEMSLConnectTest extends junit.framework.TestCase {
+public class MyEMSLConnectTest {
 
     /**
      * Basic Constructor.
@@ -42,7 +42,7 @@ import org.junit.Test;
      * @throws URISyntaxException
      * @throws ParserConfigurationException
      */
-    @Test public void testconnect() throws IOException, GeneralSecurityException, URISyntaxException,  ParserConfigurationException {
+    @Ignore @Test public void connect() throws IOException, GeneralSecurityException, URISyntaxException,  ParserConfigurationException {
         MyEMSLConnect test;
         File temp;
         temp = File.createTempFile("temp",".ini");
@@ -54,7 +54,7 @@ import org.junit.Test;
         assert test.get_myemsl_session() != null;
         test.logout();
     }
-
+    
     /**
      * Test the upload code.
      * 
@@ -71,8 +71,7 @@ import org.junit.Test;
      * @throws XPathExpressionException
      * @throws InterruptedException
      */
-    @Test
-    public void testupload() throws IOException, GeneralSecurityException, URISyntaxException, ParserConfigurationException, SAXException, XPathExpressionException, InterruptedException {
+    @Ignore @Test public void upload() throws IOException, GeneralSecurityException, URISyntaxException, ParserConfigurationException, SAXException, XPathExpressionException, InterruptedException {
         MyEMSLFileCollection col;
         MyEMSLMetadata md;
         MyEMSLConnect test;
@@ -101,7 +100,7 @@ import org.junit.Test;
         test.status_wait(test.upload(col), 15, 5);
         test.logout();
     }
-
+    
     /**
      * Test query and download, these were packed together since the two
      * processes chain together.
@@ -118,8 +117,7 @@ import org.junit.Test;
      * @throws SAXException
      * @throws XPathExpressionException
      */
-    @Test
-    public void testquery() throws IOException, GeneralSecurityException, URISyntaxException, ParserConfigurationException, SAXException, XPathExpressionException {
+    @Ignore @Test public void query() throws IOException, GeneralSecurityException, URISyntaxException, ParserConfigurationException, SAXException, XPathExpressionException {
         MyEMSLConnect test;
         File temp, output;
 
@@ -133,10 +131,11 @@ import org.junit.Test;
         ArrayList<MyEMSLGroupMD> qset = new ArrayList<MyEMSLGroupMD>();
         qset.add(new MyEMSLGroupMD("45796", "proposal"));
         qset.add(new MyEMSLGroupMD("abc_1234", "JGI.ID"));
-
+        
         /*
          * should be an array of (itemid, path, authtoken).
          */
+    
         ArrayList<Triplet<Integer,String,String>> items = test.query(qset);
         for(Triplet<Integer,String,String> i: items) {
             System.out.println(i.getValue1());
