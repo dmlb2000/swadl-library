@@ -3,8 +3,6 @@ package gov.pnnl.emsl.my;
 import org.kamranzafar.jtar.TarOutputStream;
 import org.kamranzafar.jtar.TarEntry;
 import org.kamranzafar.jtar.TarHeader;
-import gov.pnnl.emsl.my.MyEMSLMetadata;
-import gov.pnnl.emsl.my.MyEMSLFileMD;
 import java.io.OutputStream;
 import java.io.File;
 import java.io.BufferedOutputStream;
@@ -16,13 +14,36 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import org.apache.commons.codec.binary.Hex;
 
+/**
+ * This class should maintain an object describing the metadata for the files
+ * and generate a tar file of that files including metadata.
+ * 
+ * @author dmlb2000
+ */
 public class MyEMSLFileCollection {
     MyEMSLMetadata md;
 
+    /**
+     * Constructor sets the internal metadata from arguments passed.
+     * 
+     * @param md metadata object
+     */
     public MyEMSLFileCollection(MyEMSLMetadata md) {
         this.md = md;
     }
 
+    /**
+     * Create a tar file from the metadata and stream it to an output object.
+     * 
+     * This is a bit more involved since we need to create sha1sums of the files
+     * as we stream the data to the output stream. Then finally send the json
+     * of the metadata to the tar and close it.
+     * 
+     * @param out
+     * @throws IOException
+     * @throws FileNotFoundException
+     * @throws NoSuchAlgorithmException
+     */
     public void tarit(OutputStream out) throws IOException, FileNotFoundException, NoSuchAlgorithmException {
         TarOutputStream tarout = new TarOutputStream( new BufferedOutputStream( out ) );
         MessageDigest cript = MessageDigest.getInstance("SHA-1");

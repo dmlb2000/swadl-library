@@ -7,9 +7,26 @@ import java.io.FileNotFoundException;
 import java.security.NoSuchAlgorithmException;
 import org.junit.Test;
 
+/**
+ * Test the file collection object.
+ * 
+ * This test class should call the tarit method and make sure it works.
+ * 
+ * @author dmlb2000
+ */
 public class MyEMSLFileCollectionTest extends junit.framework.TestCase {
     
-        @Test
+    /**
+     * Call the tarit method to see if it throws an error.
+     * 
+     * We don't validate the tarfile afterwards we're expecting tarit to throw
+     * an error.
+     * 
+     * @throws IOException
+     * @throws FileNotFoundException
+     * @throws NoSuchAlgorithmException
+     */
+    @Test
     public void testcol() throws IOException, FileNotFoundException, NoSuchAlgorithmException {
         MyEMSLFileCollection col;
         MyEMSLMetadata md;
