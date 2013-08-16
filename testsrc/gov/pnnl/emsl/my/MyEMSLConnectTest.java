@@ -1,18 +1,6 @@
 package gov.pnnl.emsl.my;
 
 
-import gov.pnnl.emsl.my.MyEMSLConfig;
-import gov.pnnl.emsl.my.MyEMSLConfig;
-import gov.pnnl.emsl.my.MyEMSLConnect;
-import gov.pnnl.emsl.my.MyEMSLConnect;
-import gov.pnnl.emsl.my.MyEMSLFileCollection;
-import gov.pnnl.emsl.my.MyEMSLFileCollection;
-import gov.pnnl.emsl.my.MyEMSLFileMD;
-import gov.pnnl.emsl.my.MyEMSLFileMD;
-import gov.pnnl.emsl.my.MyEMSLGroupMD;
-import gov.pnnl.emsl.my.MyEMSLGroupMD;
-import gov.pnnl.emsl.my.MyEMSLMetadata;
-import gov.pnnl.emsl.my.MyEMSLMetadata;
 import java.io.File;
 import java.io.IOException;
 import java.io.BufferedWriter;
@@ -34,7 +22,7 @@ import org.junit.Test;
  * 
  * @author dmlb2000
  */
-public class MyEMSLConnectTest extends junit.framework.TestCase {
+@Ignore public class MyEMSLConnectTest extends junit.framework.TestCase {
 
     /**
      * Basic Constructor.
@@ -54,9 +42,7 @@ public class MyEMSLConnectTest extends junit.framework.TestCase {
      * @throws URISyntaxException
      * @throws ParserConfigurationException
      */
-    @Ignore
-    @Test
-    public void testconnect() throws IOException, GeneralSecurityException, URISyntaxException,  ParserConfigurationException {
+    @Test public void testconnect() throws IOException, GeneralSecurityException, URISyntaxException,  ParserConfigurationException {
         MyEMSLConnect test;
         File temp;
         temp = File.createTempFile("temp",".ini");
@@ -85,7 +71,6 @@ public class MyEMSLConnectTest extends junit.framework.TestCase {
      * @throws XPathExpressionException
      * @throws InterruptedException
      */
-    @Ignore
     @Test
     public void testupload() throws IOException, GeneralSecurityException, URISyntaxException, ParserConfigurationException, SAXException, XPathExpressionException, InterruptedException {
         MyEMSLFileCollection col;
@@ -133,7 +118,6 @@ public class MyEMSLConnectTest extends junit.framework.TestCase {
      * @throws SAXException
      * @throws XPathExpressionException
      */
-    @Ignore
     @Test
     public void testquery() throws IOException, GeneralSecurityException, URISyntaxException, ParserConfigurationException, SAXException, XPathExpressionException {
         MyEMSLConnect test;

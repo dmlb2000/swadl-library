@@ -1,7 +1,5 @@
 package gov.pnnl.emsl.my;
 
-import gov.pnnl.emsl.my.MyEMSLConfig;
-import gov.pnnl.emsl.my.MyEMSLConfig;
 import java.io.File;
 import java.io.IOException;
 import java.io.BufferedWriter;
