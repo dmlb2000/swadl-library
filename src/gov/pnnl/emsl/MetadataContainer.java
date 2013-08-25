@@ -1,4 +1,4 @@
-package gov.pnnl.emsl.my;
+package gov.pnnl.emsl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,11 +12,11 @@ import java.util.List;
  * 
  * @author dmlb2000
  */
-public class MyEMSLMD {
+public class MetadataContainer {
     /**
      * file is a list of files and the associated metadata for those files.
      */
-    public List<MyEMSLFileMD> file;
+    public List<FileMetaData> file;
     /**
      * version is a specific string required by the upload API.
      */
@@ -25,7 +25,7 @@ public class MyEMSLMD {
     /**
      * Constructor initializes internal file list.
      */
-    public MyEMSLMD() {
+    public MetadataContainer() {
         this.version = "1.0.0";
         file = new ArrayList<>();
     }

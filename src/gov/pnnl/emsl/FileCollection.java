@@ -1,4 +1,4 @@
-package gov.pnnl.emsl.my;
+package gov.pnnl.emsl;
 
 import org.kamranzafar.jtar.TarOutputStream;
 import org.kamranzafar.jtar.TarEntry;
@@ -20,15 +20,15 @@ import org.apache.commons.codec.binary.Hex;
  * 
  * @author dmlb2000
  */
-public class MyEMSLFileCollection {
-    MyEMSLMetadata md;
+public class FileCollection {
+    Metadata md;
 
     /**
      * Constructor sets the internal metadata from arguments passed.
      * 
      * @param md metadata object
      */
-    public MyEMSLFileCollection(MyEMSLMetadata md) {
+    public FileCollection(Metadata md) {
         this.md = md;
     }
 
@@ -47,7 +47,7 @@ public class MyEMSLFileCollection {
     public void tarit(OutputStream out) throws IOException, FileNotFoundException, NoSuchAlgorithmException {
         TarOutputStream tarout = new TarOutputStream( new BufferedOutputStream( out ) );
         MessageDigest cript = MessageDigest.getInstance("SHA-1");
-        for(MyEMSLFileMD f:md.md.file) {
+        for(FileMetaData f:md.md.file) {
             cript.reset();
             File fd = null;
             if(!f.destinationDirectory.equals("")) {

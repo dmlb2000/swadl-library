@@ -1,4 +1,4 @@
-package gov.pnnl.emsl.my;
+package gov.pnnl.emsl;
 
 
 import java.io.File;
@@ -73,9 +73,9 @@ import java.util.List;
  * 
  * @author dmlb2000
  */
-public class MyEMSLConnect {
+public class Connect {
 
-    MyEMSLConfig config;
+    Configuration config;
     String server;
     String username;
     String password;
@@ -125,7 +125,7 @@ public class MyEMSLConnect {
      * return with XML documents so setting up an XML Document builder and XPATH
      * object is required as well.
      * 
-     * @param config MyEMSLConfig configuration to connect to what server.
+     * @param config Configuration configuration to connect to what server.
      * @param username String containing the username.
      * @param password String containing the password.
      * @throws GeneralSecurityException
@@ -133,7 +133,7 @@ public class MyEMSLConnect {
      * @throws IOException
      * @throws ParserConfigurationException
      */
-    public MyEMSLConnect(MyEMSLConfig config, String username, String password) throws GeneralSecurityException, URISyntaxException, IOException, ParserConfigurationException {
+    public Connect(Configuration config, String username, String password) throws GeneralSecurityException, URISyntaxException, IOException, ParserConfigurationException {
         /* this sets up a pass through trust manager which is rather insecure
          * we need to figure out why the default keystore isn't working with
          * the SSL cert we have on our production systems */
@@ -200,12 +200,12 @@ public class MyEMSLConnect {
      * Then pushing the actual data to a returned location from preallocation.
      * Then calling the finish method and obtaining the status URL.
      * 
-     * @param fcol MyEMSLFileCollection to upload to MyEMSL.
+     * @param fcol FileCollection to upload to MyEMSL.
      * @return String of the status URL.
      * @throws IOException
      * @throws NoSuchAlgorithmException
      */
-    public String upload(MyEMSLFileCollection fcol) throws IOException, NoSuchAlgorithmException {
+    public String upload(FileCollection fcol) throws IOException, NoSuchAlgorithmException {
         File temp;
         temp = File.createTempFile("temp",".tar");
         temp.deleteOnExit();
@@ -280,7 +280,7 @@ public class MyEMSLConnect {
     }
 
     /**
-     * Query function should take a list of MyEMSLGroupMD and return a List of
+     * Query function should take a list of GroupMetaData and return a List of
      * files that match those groups.
      * 
      * This is a little more complex since the files really are the itemid,
@@ -295,10 +295,10 @@ public class MyEMSLConnect {
      * @throws SAXException
      * @throws XPathExpressionException
      */
-    public ArrayList<Triplet<Integer,String,String>> query(List<MyEMSLGroupMD> groups) throws IOException, SAXException, XPathExpressionException {
+    public ArrayList<Triplet<Integer,String,String>> query(List<GroupMetaData> groups) throws IOException, SAXException, XPathExpressionException {
         ArrayList<Integer> ret = new ArrayList<Integer>();
         String url = config.queryurl();
-        for(MyEMSLGroupMD g: groups) {
+        for(GroupMetaData g: groups) {
             url += "/group/"+g.type+"/"+g.name;
         }
         url += "/data";

@@ -1,6 +1,10 @@
-package gov.pnnl.emsl.my;
+package gov.pnnl.emsl;
 
 
+import gov.pnnl.emsl.GroupMetaData;
+import gov.pnnl.emsl.FileCollection;
+import gov.pnnl.emsl.Metadata;
+import gov.pnnl.emsl.FileMetaData;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
@@ -14,7 +18,7 @@ import org.junit.Test;
  * 
  * @author dmlb2000
  */
-public class MyEMSLFileCollectionTest {
+public class FileCollectionTest {
     
     /**
      * Call the tarit method to see if it throws an error.
@@ -27,22 +31,22 @@ public class MyEMSLFileCollectionTest {
      * @throws NoSuchAlgorithmException
      */
     @Test public void collection() throws IOException, FileNotFoundException, NoSuchAlgorithmException {
-        MyEMSLFileCollection col;
-        MyEMSLMetadata md;
-        MyEMSLFileMD afmd = new MyEMSLFileMD("test/a", "test/a", "hashforfilea");
-        MyEMSLFileMD bfmd = new MyEMSLFileMD("test/b", "test/b", "hashforfilea");
+        FileCollection col;
+        Metadata md;
+        FileMetaData afmd = new FileMetaData("test/a", "test/a", "hashforfilea");
+        FileMetaData bfmd = new FileMetaData("test/b", "test/b", "hashforfilea");
 
-        afmd.groups.add(new MyEMSLGroupMD("45765", "proposal"));
-        afmd.groups.add(new MyEMSLGroupMD("abc_1234", "JGI.ID"));
-        bfmd.groups.add(new MyEMSLGroupMD("45765", "proposal"));
-        bfmd.groups.add(new MyEMSLGroupMD("abc_1235", "JGI.ID"));
+        afmd.groups.add(new GroupMetaData("45765", "proposal"));
+        afmd.groups.add(new GroupMetaData("abc_1234", "JGI.ID"));
+        bfmd.groups.add(new GroupMetaData("45765", "proposal"));
+        bfmd.groups.add(new GroupMetaData("abc_1235", "JGI.ID"));
 
-        md = new MyEMSLMetadata();
+        md = new Metadata();
         md.md.file.add(afmd);
         md.md.file.add(bfmd);
 
         FileOutputStream dest = new FileOutputStream( "/tmp/test.tar" );
-        col = new MyEMSLFileCollection(md);
+        col = new FileCollection(md);
         col.tarit(dest);
     }
 }

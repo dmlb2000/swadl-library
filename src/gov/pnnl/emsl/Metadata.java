@@ -1,4 +1,4 @@
-package gov.pnnl.emsl.my;
+package gov.pnnl.emsl;
 
 import com.google.gson.Gson;
 
@@ -8,18 +8,18 @@ import com.google.gson.Gson;
  * 
  * @author dmlb2000
  */
-public class MyEMSLMetadata {
+public class Metadata {
 
     Gson gson;
     /**
      * This is the metadata that gets turned into JSON.
      */
-    public MyEMSLMD md;
+    public MetadataContainer md;
 
     /**
      * Constructor creates the Gson object internally and sets a new md object too.
      */
-    public MyEMSLMetadata() { this.gson = new Gson(); this.md = new MyEMSLMD(); }
+    public Metadata() { this.gson = new Gson(); this.md = new MetadataContainer(); }
 
     /**
      * Creates the content of the JSON metadata file.

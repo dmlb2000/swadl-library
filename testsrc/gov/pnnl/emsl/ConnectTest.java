@@ -1,6 +1,12 @@
-package gov.pnnl.emsl.my;
+package gov.pnnl.emsl;
 
 
+import gov.pnnl.emsl.GroupMetaData;
+import gov.pnnl.emsl.FileCollection;
+import gov.pnnl.emsl.Metadata;
+import gov.pnnl.emsl.FileMetaData;
+import gov.pnnl.emsl.Connect;
+import gov.pnnl.emsl.Configuration;
 import java.io.File;
 import java.io.IOException;
 import java.io.BufferedWriter;
@@ -16,18 +22,18 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * This class should test the MyEMSLConnect Object.
+ * This class should test the Connect Object.
  * 
  * The testing class should test connection, query, upload and download.
  * 
  * @author dmlb2000
  */
-public class MyEMSLConnectTest {
+public class ConnectTest {
 
     /**
      * Basic Constructor.
      */
-    public MyEMSLConnectTest() { }
+    public ConnectTest() { }
 
     /**
      * Test the connection code to MyEMSL to see that it works.
@@ -43,14 +49,14 @@ public class MyEMSLConnectTest {
      * @throws ParserConfigurationException
      */
     @Ignore @Test public void connect() throws IOException, GeneralSecurityException, URISyntaxException,  ParserConfigurationException {
-        MyEMSLConnect test;
+        Connect test;
         File temp;
         temp = File.createTempFile("temp",".ini");
         temp.deleteOnExit();
         BufferedWriter writer = new BufferedWriter(new FileWriter(temp));
         writer.write("[client]\nproto=https\nserver=192.168.122.128\nservices=myemsl/services\n");
         writer.close();
-        test = new MyEMSLConnect(new MyEMSLConfig(temp.getAbsolutePath()), "dmlb2000", "dmlb336");
+        test = new Connect(new Configuration(temp.getAbsolutePath()), "dmlb2000", "dmlb336");
         assert test.get_myemsl_session() != null;
         test.logout();
     }
@@ -72,9 +78,9 @@ public class MyEMSLConnectTest {
      * @throws InterruptedException
      */
     @Ignore @Test public void upload() throws IOException, GeneralSecurityException, URISyntaxException, ParserConfigurationException, SAXException, XPathExpressionException, InterruptedException {
-        MyEMSLFileCollection col;
-        MyEMSLMetadata md;
-        MyEMSLConnect test;
+        FileCollection col;
+        Metadata md;
+        Connect test;
         File temp;
 
         temp = File.createTempFile("temp",".ini");
@@ -82,21 +88,21 @@ public class MyEMSLConnectTest {
         BufferedWriter writer = new BufferedWriter(new FileWriter(temp));
         writer.write("[client]\nproto=https\nserver=192.168.122.128\nservices=myemsl/services\n");
         writer.close();
-        test = new MyEMSLConnect(new MyEMSLConfig(temp.getAbsolutePath()), "dmlb2000", "dmlb336");
+        test = new Connect(new Configuration(temp.getAbsolutePath()), "dmlb2000", "dmlb336");
 
-        MyEMSLFileMD afmd = new MyEMSLFileMD("test"+File.separator+"a", "test"+File.separator+"a", "hashforfilea");
-        MyEMSLFileMD bfmd = new MyEMSLFileMD("test"+File.separator+"b", "test"+File.separator+"b", "hashforfilea");
+        FileMetaData afmd = new FileMetaData("test"+File.separator+"a", "test"+File.separator+"a", "hashforfilea");
+        FileMetaData bfmd = new FileMetaData("test"+File.separator+"b", "test"+File.separator+"b", "hashforfilea");
 
-        afmd.groups.add(new MyEMSLGroupMD("45796", "proposal"));
-        afmd.groups.add(new MyEMSLGroupMD("abc_1234", "JGI.ID"));
-        bfmd.groups.add(new MyEMSLGroupMD("45796", "proposal"));
-        bfmd.groups.add(new MyEMSLGroupMD("abc_1235", "JGI.ID"));
+        afmd.groups.add(new GroupMetaData("45796", "proposal"));
+        afmd.groups.add(new GroupMetaData("abc_1234", "JGI.ID"));
+        bfmd.groups.add(new GroupMetaData("45796", "proposal"));
+        bfmd.groups.add(new GroupMetaData("abc_1235", "JGI.ID"));
 
-        md = new MyEMSLMetadata();
+        md = new Metadata();
         md.md.file.add(afmd);
         md.md.file.add(bfmd);
 
-        col = new MyEMSLFileCollection(md);
+        col = new FileCollection(md);
         test.status_wait(test.upload(col), 15, 5);
         test.logout();
     }
@@ -118,7 +124,7 @@ public class MyEMSLConnectTest {
      * @throws XPathExpressionException
      */
     @Ignore @Test public void query() throws IOException, GeneralSecurityException, URISyntaxException, ParserConfigurationException, SAXException, XPathExpressionException {
-        MyEMSLConnect test;
+        Connect test;
         File temp, output;
 
         temp = File.createTempFile("temp",".ini");
@@ -126,11 +132,11 @@ public class MyEMSLConnectTest {
         BufferedWriter writer = new BufferedWriter(new FileWriter(temp));
         writer.write("[client]\nproto=https\nquery_server=192.168.122.128\nserver=192.168.122.128\nservices=myemsl/services\n");
         writer.close();
-        test = new MyEMSLConnect(new MyEMSLConfig(temp.getAbsolutePath()), "dmlb2000", "dmlb336");
+        test = new Connect(new Configuration(temp.getAbsolutePath()), "dmlb2000", "dmlb336");
 
-        ArrayList<MyEMSLGroupMD> qset = new ArrayList<MyEMSLGroupMD>();
-        qset.add(new MyEMSLGroupMD("45796", "proposal"));
-        qset.add(new MyEMSLGroupMD("abc_1234", "JGI.ID"));
+        ArrayList<GroupMetaData> qset = new ArrayList<GroupMetaData>();
+        qset.add(new GroupMetaData("45796", "proposal"));
+        qset.add(new GroupMetaData("abc_1234", "JGI.ID"));
         
         /*
          * should be an array of (itemid, path, authtoken).

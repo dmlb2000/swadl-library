@@ -1,4 +1,4 @@
-package gov.pnnl.emsl.my;
+package gov.pnnl.emsl;
 
 import java.lang.String;
 
@@ -16,7 +16,7 @@ import org.ini4j.IniPreferences;
  *
  * @author dmlb2000
  */
-public class MyEMSLConfig {
+public class Configuration {
     IniPreferences prefs;
 
     /**
@@ -24,7 +24,7 @@ public class MyEMSLConfig {
      * 
      * @throws IOException
      */
-    public MyEMSLConfig() throws IOException {
+    public Configuration() throws IOException {
         Ini config = new Ini(new File("/etc/myemsl/general.ini"));
         prefs = new IniPreferences(config);
     }
@@ -35,7 +35,7 @@ public class MyEMSLConfig {
      * @param filename config ini for class to use.
      * @throws IOException
      */
-    public MyEMSLConfig(String filename) throws IOException {
+    public Configuration(String filename) throws IOException {
         Ini config = new Ini(new File(filename));
         prefs = new IniPreferences(config);
     }

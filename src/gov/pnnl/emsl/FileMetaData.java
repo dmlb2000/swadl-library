@@ -1,4 +1,4 @@
-package gov.pnnl.emsl.my;
+package gov.pnnl.emsl;
 
 
 import java.io.File;
@@ -14,7 +14,7 @@ import java.util.List;
  * 
  * @author dmlb2000
  */
-public class MyEMSLFileMD {
+public class FileMetaData {
     /**
      * sha1Hash should contain the sha1sum for the file.
      */
@@ -34,7 +34,7 @@ public class MyEMSLFileMD {
     /**
      * groups are the metadata groups for the file.
      */
-    public List<MyEMSLGroupMD> groups;
+    public List<GroupMetaData> groups;
 
     /**
      * Constructor should store the parameters given into the object.
@@ -48,7 +48,7 @@ public class MyEMSLFileMD {
      * @param localpath String of the local path to the file.
      * @param hash String of the hash sum of the file.
      */
-    public MyEMSLFileMD(String filename, String localpath, String hash) {
+    public FileMetaData(String filename, String localpath, String hash) {
         File f = new File(filename);
         this.sha1Hash = hash;
         this.localFilePath = localpath;

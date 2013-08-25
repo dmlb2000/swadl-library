@@ -1,4 +1,4 @@
-package gov.pnnl.emsl.my;
+package gov.pnnl.emsl;
 
 
 import java.io.File;
@@ -31,7 +31,7 @@ import org.apache.commons.cli.HelpFormatter;
  * 
  * @author dmlb2000
  */
-public class MyEMSLMain {
+public class Main {
     /**
      * Main method does mostly option parsing and setting up some initial
      * variables to pass onto the upload or download methods.
@@ -50,7 +50,7 @@ public class MyEMSLMain {
         String username;
         String server = "my.emsl.pnl.gov";
         String qserver = "my.emsl.pnl.gov";
-        MyEMSLConnect conn;
+        Connect conn;
 
         File config;
 
@@ -164,7 +164,7 @@ public class MyEMSLMain {
             return;
         }
         String password = new String (console.readPassword ("Enter password: "));
-        conn = new MyEMSLConnect(new MyEMSLConfig(config.getAbsolutePath()), username, password);
+        conn = new Connect(new Configuration(config.getAbsolutePath()), username, password);
         if ( line.hasOption("f") ) {
             doUpload(conn, line);
         }
@@ -173,15 +173,15 @@ public class MyEMSLMain {
         }
     }
 
-    private static void doUpload(MyEMSLConnect conn, CommandLine line) throws IOException, SAXException, ParserConfigurationException, SAXException, NoSuchAlgorithmException, XPathExpressionException, InterruptedException {
-        MyEMSLFileCollection col;
-        MyEMSLMetadata md;
+    private static void doUpload(Connect conn, CommandLine line) throws IOException, SAXException, ParserConfigurationException, SAXException, NoSuchAlgorithmException, XPathExpressionException, InterruptedException {
+        FileCollection col;
+        Metadata md;
 
-        md = new MyEMSLMetadata();
+        md = new Metadata();
         for(String s:line.getOptionValues("file")) {
-            MyEMSLFileMD afmd = new MyEMSLFileMD(s, s, "hashforfilea");
+            FileMetaData afmd = new FileMetaData(s, s, "hashforfilea");
             for(String g:line.getOptionValues("group")) {
-                afmd.groups.add(new MyEMSLGroupMD(g.split("=")[1], g.split("=")[0]));
+                afmd.groups.add(new GroupMetaData(g.split("=")[1], g.split("=")[0]));
             }
             md.md.file.add(afmd);
         }
@@ -191,19 +191,19 @@ public class MyEMSLMain {
             timeout = new Integer(line.getOptionValue("timeout"));
         }
 
-        col = new MyEMSLFileCollection(md);
+        col = new FileCollection(md);
         conn.status_wait(conn.upload(col), timeout, 5);
         conn.logout();
     }
 
-    private static void doDownload(MyEMSLConnect conn, CommandLine line) throws IOException, SAXException, XPathExpressionException {
+    private static void doDownload(Connect conn, CommandLine line) throws IOException, SAXException, XPathExpressionException {
         String destdir = line.getOptionValue("d");
         File ofile;
         File odir;
-        ArrayList<MyEMSLGroupMD> qset = new ArrayList<>();
+        ArrayList<GroupMetaData> qset = new ArrayList<>();
 
         for(String g:line.getOptionValues("group")) {
-            qset.add(new MyEMSLGroupMD(g.split("=")[1], g.split("=")[0]));
+            qset.add(new GroupMetaData(g.split("=")[1], g.split("=")[0]));
         }
         ArrayList<Triplet<Integer,String,String>> items = conn.query(qset);
         for(Triplet<Integer,String,String> i: items) {

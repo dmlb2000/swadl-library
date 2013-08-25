@@ -1,4 +1,4 @@
-package gov.pnnl.emsl.my;
+package gov.pnnl.emsl;
 
 /**
  * Group metadata class contains the key value pairs that define metadata for
@@ -6,7 +6,7 @@ package gov.pnnl.emsl.my;
  * 
  * @author dmlb2000
  */
-public class MyEMSLGroupMD {
+public class GroupMetaData {
     /**
      * Name is the user defined value of the metadata pair.
      */
@@ -26,7 +26,7 @@ public class MyEMSLGroupMD {
      * @param name
      * @param type
      */
-    public MyEMSLGroupMD(String name, String type) {
+    public GroupMetaData(String name, String type) {
         this.name = name;
         this.type = type;
     }

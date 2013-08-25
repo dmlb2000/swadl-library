@@ -1,5 +1,6 @@
-package gov.pnnl.emsl.my;
+package gov.pnnl.emsl;
 
+import gov.pnnl.emsl.Configuration;
 import java.io.File;
 import java.io.IOException;
 import java.io.BufferedWriter;
@@ -12,8 +13,8 @@ import org.junit.Test;
  * 
  * @author dmlb2000
  */
-public class MyEMSLConfigTest {
-    MyEMSLConfig test;
+public class ConfigTest {
+    Configuration test;
     File temp;
 
     /**
@@ -22,13 +23,13 @@ public class MyEMSLConfigTest {
      * 
      * @throws IOException
      */
-    public MyEMSLConfigTest() throws IOException {
+    public ConfigTest() throws IOException {
         temp = File.createTempFile("temp",".ini");
         temp.deleteOnExit();
         BufferedWriter writer = new BufferedWriter(new FileWriter(temp));
         writer.write("[client]\nproto=https\nserver=a4.my.emsl.pnl.gov\nservices=myemsl/services\n");
         writer.close();
-        test = new MyEMSLConfig(temp.getAbsolutePath());
+        test = new Configuration(temp.getAbsolutePath());
     }
 
     /**
