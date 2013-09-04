@@ -7,8 +7,11 @@ import java.util.List;
  * Metadata class should contain the list of files and a version string.
  * 
  * The version string represents the version of the structure in the metadata
- * JSON file produced. This class is not to be confused with the MyEMSLMetadata
+ * JSON file produced. This class is not to be confused with the Metadata
  * object that converts this class and all members into a JSON document.
+ * 
+ * Essentially, this is just a container class to make sure the JSON comes out
+ * right.
  * 
  * @author dmlb2000
  */

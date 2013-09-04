@@ -12,8 +12,6 @@ import java.io.UnsupportedEncodingException;
 import java.security.KeyStore;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
-import java.lang.String;
-import java.lang.InterruptedException;
 import java.net.URL;
 import java.net.URISyntaxException;
 
@@ -149,6 +147,7 @@ public class Connect {
         SSLSocketFactory socketFactory = new SSLSocketFactory(null_ctx);
         socketFactory.setHostnameVerifier((X509HostnameVerifier) org.apache.http.conn.ssl.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
         Scheme sch = new Scheme("https", 443, socketFactory);
+        /* this is the xml and xpath stuff */
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         this.db = dbf.newDocumentBuilder();
         this.xPath = XPathFactory.newInstance().newXPath();
