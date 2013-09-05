@@ -55,7 +55,7 @@ public class FileMetaData {
         this.fileName = f.getName();
         this.destinationDirectory = f.getParent();
         if(this.destinationDirectory == null) { this.destinationDirectory = ""; }
-        this.groups = new ArrayList<>();
+        this.groups = new ArrayList<GroupMetaData>();
     }
 }
 

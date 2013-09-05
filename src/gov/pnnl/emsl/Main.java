@@ -200,7 +200,7 @@ public class Main {
         String destdir = line.getOptionValue("d");
         File ofile;
         File odir;
-        ArrayList<GroupMetaData> qset = new ArrayList<>();
+        ArrayList<GroupMetaData> qset = new ArrayList<GroupMetaData>();
 
         for(String g:line.getOptionValues("group")) {
             qset.add(new GroupMetaData(g.split("=")[1], g.split("=")[0]));

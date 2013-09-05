@@ -30,7 +30,7 @@ public class MetadataContainer {
      */
     public MetadataContainer() {
         this.version = "1.0.0";
-        file = new ArrayList<>();
+        file = new ArrayList<FileMetaData>();
     }
 }
 
