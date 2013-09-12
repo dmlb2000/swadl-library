@@ -209,9 +209,6 @@ public class Connect {
      * @throws NoSuchAlgorithmException
      */
     public String upload(final FileCollection fcol) throws IOException, NoSuchAlgorithmException {
-        File temp;
-        temp = File.createTempFile("temp",".tar");
-        temp.deleteOnExit();
         NullOutputStream ostream = new NullOutputStream();
         fcol.tarit(ostream);
         long length = ostream.getLength();
@@ -225,6 +222,8 @@ public class Connect {
         ingestServer = ingestServer.split(": ")[1];
         location = location.split(": ")[1];
 
+        System.out.println("https://"+ingestServer+location);
+        
         HttpPut put_file = new HttpPut("https://"+ingestServer+location);
         
         PipedInputStream in = new PipedInputStream();
