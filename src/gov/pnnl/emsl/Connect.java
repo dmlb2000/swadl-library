@@ -2,12 +2,14 @@ package gov.pnnl.emsl;
 
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyStore;
 import java.security.GeneralSecurityException;
@@ -23,7 +25,6 @@ import javax.net.ssl.SSLContext;
 
 import org.apache.http.util.EntityUtils;
 import org.apache.http.HttpEntity;
-import org.apache.http.entity.FileEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -63,6 +64,9 @@ import org.xml.sax.SAXException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.http.entity.InputStreamEntity;
 
 
 /**
@@ -204,24 +208,43 @@ public class Connect {
      * @throws IOException
      * @throws NoSuchAlgorithmException
      */
-    public String upload(FileCollection fcol) throws IOException, NoSuchAlgorithmException {
+    public String upload(final FileCollection fcol) throws IOException, NoSuchAlgorithmException {
         File temp;
         temp = File.createTempFile("temp",".tar");
         temp.deleteOnExit();
-        FileOutputStream ostream = new FileOutputStream(temp);
+        NullOutputStream ostream = new NullOutputStream();
         fcol.tarit(ostream);
-        ostream.close();
-
+        long length = ostream.getLength();
+        System.out.println(length);
+        
         HttpGet get_prealloc = new HttpGet(config.preallocurl());
         HttpResponse response = client.execute(get_prealloc, localContext);
         String prealloc_file = this.read_http_entity(response.getEntity());
-        String server = prealloc_file.split("\n")[0];
+        String ingestServer = prealloc_file.split("\n")[0];
         String location = prealloc_file.split("\n")[1];
-        server = server.split(": ")[1];
+        ingestServer = ingestServer.split(": ")[1];
         location = location.split(": ")[1];
 
-        HttpPut put_file = new HttpPut("https://"+server+location);
-        FileEntity entity = new FileEntity(temp);
+        HttpPut put_file = new HttpPut("https://"+ingestServer+location);
+        
+        PipedInputStream in = new PipedInputStream();
+        final PipedOutputStream out = new PipedOutputStream(in);
+        new Thread(
+                new Runnable(){
+                    @Override
+                    public void run(){
+                        try {
+                            fcol.tarit(out);
+                        } catch (IOException ex) {
+                            Logger.getLogger(Connect.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (NoSuchAlgorithmException ex) {
+                            Logger.getLogger(Connect.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
+        ).start();
+        
+        InputStreamEntity entity = new InputStreamEntity(in, length);
         put_file.setEntity(entity);
         response = client.execute(put_file, localContext);
         this.read_http_entity(response.getEntity());
