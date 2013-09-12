@@ -90,7 +90,7 @@
             <zipfileset src="${file.reference.jtar-2.2.jar}" includes="**/*.java **/*.class"/>
             <zipfileset src="${file.reference.junit4.jar}" includes="**/*.java **/*.class"/>
             <manifest>
-                <attribute name="Main-Class" value="gov.pnnl.emsl.my.MyEMSLMain"/>
+                <attribute name="Main-Class" value="gov.pnnl.emsl.Main"/>
             </manifest>
         </jar>
     </target>
