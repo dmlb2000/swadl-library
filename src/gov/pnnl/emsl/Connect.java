@@ -248,7 +248,7 @@ public class Connect {
         response = client.execute(put_file, localContext);
         this.read_http_entity(response.getEntity());
 
-        HttpGet get_finish = new HttpGet("https://"+server+config.finishurl()+location);
+        HttpGet get_finish = new HttpGet("https://"+ingestServer+config.finishurl()+location);
         response = client.execute(get_finish, localContext);
         String status_url = this.read_http_entity(response.getEntity());
         for(String line:status_url.split("\n")) {
