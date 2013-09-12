@@ -71,4 +71,27 @@
     nbproject/build-impl.xml file. 
 
     -->
+        <target name="-post-jar">
+        <jar jarfile="dist/MyEMSL-dist.jar">
+            <zipfileset src="${dist.jar}" excludes="META-INF/*" />
+            <zipfileset src="${file.reference.commons-cli-1.2.jar}" includes="**/*.java **/*.class"/>
+            <zipfileset src="${file.reference.commons-codec-1.7.jar}" includes="**/*.java **/*.class"/>
+            <zipfileset src="${file.reference.commons-logging-1.1.1.jar}" includes="**/*.java **/*.class"/>
+            <zipfileset src="${file.reference.fluent-hc-4.2.3.jar}" includes="**/*.java **/*.class"/>
+            <zipfileset src="${file.reference.gson-2.2.2.jar}" includes="**/*.java **/*.class"/>
+            <zipfileset src="${file.reference.httpclient-4.2.3.jar}" includes="**/*.java **/*.class"/>
+            <zipfileset src="${file.reference.httpclient-cache-4.2.3.jar}" includes="**/*.java **/*.class"/>
+            <zipfileset src="${file.reference.httpcore-4.2.3.jar}" includes="**/*.java **/*.class"/>
+            <zipfileset src="${file.reference.httpcore-ab-4.2.3.jar}" includes="**/*.java **/*.class"/>
+            <zipfileset src="${file.reference.httpcore-nio-4.2.3.jar}" includes="**/*.java **/*.class"/>
+            <zipfileset src="${file.reference.httpmime-4.2.3.jar}" includes="**/*.java **/*.class"/>
+            <zipfileset src="${file.reference.ini4j-0.5.2.jar}" includes="**/*.java **/*.class"/>
+            <zipfileset src="${file.reference.javatuples-1.2.jar}" includes="**/*.java **/*.class"/>
+            <zipfileset src="${file.reference.jtar-2.2.jar}" includes="**/*.java **/*.class"/>
+            <zipfileset src="${file.reference.junit4.jar}" includes="**/*.java **/*.class"/>
+            <manifest>
+                <attribute name="Main-Class" value="gov.pnnl.emsl.my.MyEMSLMain"/>
+            </manifest>
+        </jar>
+    </target>
 </project>
