@@ -212,8 +212,7 @@ public class Connect {
         NullOutputStream ostream = new NullOutputStream();
         fcol.tarit(ostream);
         long length = ostream.getLength();
-        System.out.println(length);
-        
+
         HttpGet get_prealloc = new HttpGet(config.preallocurl());
         HttpResponse response = client.execute(get_prealloc, localContext);
         String prealloc_file = this.read_http_entity(response.getEntity());
@@ -221,8 +220,6 @@ public class Connect {
         String location = prealloc_file.split("\n")[1];
         ingestServer = ingestServer.split(": ")[1];
         location = location.split(": ")[1];
-
-        System.out.println("https://"+ingestServer+location);
         
         HttpPut put_file = new HttpPut("https://"+ingestServer+location);
         
