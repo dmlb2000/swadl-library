@@ -1,7 +1,5 @@
 package gov.pnnl.emsl;
 
-import java.lang.String;
-
 import java.io.File;
 import java.io.IOException;
 

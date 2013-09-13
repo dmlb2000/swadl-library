@@ -21,6 +21,7 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
 
 /**
  * This is the main class to have a main method.
@@ -55,60 +56,45 @@ public class Main {
         File config;
 
         Options options = new Options();
-        options.addOption( OptionBuilder
-            .withLongOpt( "file" )
-            .withDescription( "filename to include" )
-            .hasOptionalArgs()
-            .withArgName("FILE")
-            .create('f')
-        );
-        options.addOption( OptionBuilder
-            .withLongOpt( "group" )
-            .withDescription( "group name value pair" )
-            .hasOptionalArgs()
-            .withArgName("GROUP=NAME")
-            .create('g')
-        );
-        options.addOption( OptionBuilder
-            .withLongOpt( "destination" )
-            .withDescription( "dir to put files into" )
-            .hasArg()
-            .withArgName("DIRECTORY")
-            .create('d')
-        );
-        options.addOption( OptionBuilder
-            .withLongOpt( "query-server" )
-            .withDescription( "server to query from" )
-            .hasArg()
-            .withArgName("HOST")
-            .create('q')
-        );
-        options.addOption( OptionBuilder
-            .withLongOpt( "server" )
-            .withDescription( "server to upload to or download from" )
-            .hasArg()
-            .withArgName("HOST")
-            .create('s')
-        );
-        options.addOption( OptionBuilder
-            .withLongOpt( "username" )
-            .withDescription( "username" )
-            .hasArg()
-            .withArgName("USERNAME")
-            .create('u')
-        );
-        options.addOption( OptionBuilder
-            .withLongOpt( "timeout" )
-            .withDescription( "timeout to wait for connections to fail." )
-            .hasArg()
-            .withArgName("SECONDS")
-            .create('t')
-        );
-        options.addOption( OptionBuilder
-            .withLongOpt( "help" )
-            .withDescription( "print help message" )
-            .create('h')
-        );
+        final Option tmpopt;
+        OptionBuilder.withLongOpt( "file" );
+        OptionBuilder.withDescription( "filename to include" );
+        OptionBuilder.hasOptionalArgs();
+        OptionBuilder.withArgName("FILE");
+        options.addOption(OptionBuilder.create('f'));
+        OptionBuilder.withLongOpt( "group" );
+        OptionBuilder.withDescription( "group name value pair" );
+        OptionBuilder.hasOptionalArgs();
+        OptionBuilder.withArgName("GROUP=NAME");
+        options.addOption(OptionBuilder.create('g'));
+        OptionBuilder.withLongOpt( "destination" );
+        OptionBuilder.withDescription( "dir to put files into" );
+        OptionBuilder.hasArg();
+        OptionBuilder.withArgName("DIRECTORY");
+        options.addOption(OptionBuilder.create('d'));
+        OptionBuilder.withLongOpt( "query-server" );
+        OptionBuilder.withDescription( "server to query from" );
+        OptionBuilder.hasArg();
+        OptionBuilder.withArgName("HOST");
+        options.addOption(OptionBuilder.create('g'));
+        OptionBuilder.withLongOpt( "server" );
+        OptionBuilder.withDescription( "server to upload to or download from" );
+        OptionBuilder.hasArg();
+        OptionBuilder.withArgName("HOST");
+        options.addOption(OptionBuilder.create('s'));
+        OptionBuilder.withLongOpt( "username" );
+        OptionBuilder.withDescription( "username" );
+        OptionBuilder.hasArg();
+        OptionBuilder.withArgName("USERNAME");
+        options.addOption(OptionBuilder.create('u'));
+        OptionBuilder.withLongOpt( "timeout" );
+        OptionBuilder.withDescription( "timeout to wait for connections to fail." );
+        OptionBuilder.hasArg();
+        OptionBuilder.withArgName("SECONDS");
+        options.addOption(OptionBuilder.create('t'));
+        OptionBuilder.withLongOpt( "help" );
+        OptionBuilder.withDescription( "print help message" );
+        options.addOption(OptionBuilder.create('h'));
         CommandLineParser parser = new GnuParser();
         CommandLine line = null;
         try {

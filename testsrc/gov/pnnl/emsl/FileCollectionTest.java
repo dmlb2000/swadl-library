@@ -1,10 +1,6 @@
 package gov.pnnl.emsl;
 
 
-import gov.pnnl.emsl.GroupMetaData;
-import gov.pnnl.emsl.FileCollection;
-import gov.pnnl.emsl.Metadata;
-import gov.pnnl.emsl.FileMetaData;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;

@@ -1,8 +1,5 @@
 package gov.pnnl.emsl;
 
-import gov.pnnl.emsl.GroupMetaData;
-import gov.pnnl.emsl.Metadata;
-import gov.pnnl.emsl.FileMetaData;
 import org.junit.Test;
 
 /**

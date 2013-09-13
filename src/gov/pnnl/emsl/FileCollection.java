@@ -49,7 +49,7 @@ public class FileCollection {
         MessageDigest cript = MessageDigest.getInstance("SHA-1");
         for(FileMetaData f:md.md.file) {
             cript.reset();
-            File fd = null;
+            File fd;
             if(!f.destinationDirectory.equals("")) {
                 fd = new File(f.localFilePath);
                 tarout.putNextEntry(new TarEntry(fd, f.destinationDirectory + "/" + f.fileName));

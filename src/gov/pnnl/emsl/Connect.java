@@ -1,13 +1,10 @@
 package gov.pnnl.emsl;
 
-
-import java.io.File;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.UnsupportedEncodingException;
@@ -96,7 +93,9 @@ public class Connect {
     private String read_http_entity(HttpEntity entity, BufferedWriter out) throws IOException {
         String ret = "";
         char [] buf = new char[1024];
-        Integer got = 0, total = 0;
+        Integer got;
+        Integer total;
+        total = 0;
         if (entity != null) {
             BufferedReader br = new BufferedReader(new InputStreamReader(entity.getContent()));
             String readLine;
@@ -189,7 +188,9 @@ public class Connect {
             System.out.format("%s=%s\n",
                 cookieStore.getCookies().get(i).getName().trim(),
                 cookieStore.getCookies().get(i).getValue().trim());
-            if(cookieStore.getCookies().get(i).getName().trim().equals(new String("myemsl_session"))) {
+            if(!cookieStore.getCookies().get(i).getName().trim().equals("myemsl_session")) {
+                return null;
+            } else {
                 return cookieStore.getCookies().get(i).getValue();
             }
         }
