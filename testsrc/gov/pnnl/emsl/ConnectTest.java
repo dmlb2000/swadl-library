@@ -50,7 +50,7 @@ public class ConnectTest {
         BufferedWriter writer = new BufferedWriter(new FileWriter(temp));
         writer.write("[client]\nproto=https\nserver=192.168.122.128\nservices=myemsl/services\n");
         writer.close();
-        test = new Connect(new Configuration(temp.getAbsolutePath()), "dmlb2000", "dmlb336");
+        test = new Connect(new LibraryConfiguration(temp.getAbsolutePath()), "dmlb2000", "dmlb336");
         assert test.get_myemsl_session() != null;
         test.logout();
     }
@@ -82,7 +82,7 @@ public class ConnectTest {
         BufferedWriter writer = new BufferedWriter(new FileWriter(temp));
         writer.write("[client]\nproto=https\nserver=192.168.122.128\nservices=myemsl/services\n");
         writer.close();
-        test = new Connect(new Configuration(temp.getAbsolutePath()), "dmlb2000", "dmlb336");
+        test = new Connect(new LibraryConfiguration(temp.getAbsolutePath()), "dmlb2000", "dmlb336");
 
         FileMetaData afmd = new FileMetaData("test"+File.separator+"a", "test"+File.separator+"a", "hashforfilea");
         FileMetaData bfmd = new FileMetaData("test"+File.separator+"b", "test"+File.separator+"b", "hashforfilea");
@@ -126,7 +126,7 @@ public class ConnectTest {
         BufferedWriter writer = new BufferedWriter(new FileWriter(temp));
         writer.write("[client]\nproto=https\nquery_server=192.168.122.128\nserver=192.168.122.128\nservices=myemsl/services\n");
         writer.close();
-        test = new Connect(new Configuration(temp.getAbsolutePath()), "dmlb2000", "dmlb336");
+        test = new Connect(new LibraryConfiguration(temp.getAbsolutePath()), "dmlb2000", "dmlb336");
 
         ArrayList<GroupMetaData> qset = new ArrayList<GroupMetaData>();
         qset.add(new GroupMetaData("45796", "proposal"));

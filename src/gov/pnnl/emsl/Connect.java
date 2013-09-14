@@ -74,7 +74,7 @@ import org.apache.http.entity.InputStreamEntity;
  */
 public class Connect {
 
-    Configuration config;
+    LibraryConfiguration config;
     String server;
     String username;
     String password;
@@ -126,7 +126,7 @@ public class Connect {
      * return with XML documents so setting up an XML Document builder and XPATH
      * object is required as well.
      * 
-     * @param config Configuration configuration to connect to what server.
+     * @param config LibraryConfiguration configuration to connect to what server.
      * @param username String containing the username.
      * @param password String containing the password.
      * @throws GeneralSecurityException
@@ -134,7 +134,7 @@ public class Connect {
      * @throws IOException
      * @throws ParserConfigurationException
      */
-    public Connect(Configuration config, String username, String password) throws GeneralSecurityException, URISyntaxException, IOException, ParserConfigurationException {
+    public Connect(LibraryConfiguration config, String username, String password) throws GeneralSecurityException, URISyntaxException, IOException, ParserConfigurationException {
         /* this sets up a pass through trust manager which is rather insecure
          * we need to figure out why the default keystore isn't working with
          * the SSL cert we have on our production systems */

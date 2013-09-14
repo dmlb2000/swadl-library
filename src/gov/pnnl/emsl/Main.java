@@ -150,7 +150,7 @@ public class Main {
             return;
         }
         String password = new String (console.readPassword ("Enter password: "));
-        conn = new Connect(new Configuration(config.getAbsolutePath()), username, password);
+        conn = new Connect(new LibraryConfiguration(config.getAbsolutePath()), username, password);
         if ( line.hasOption("f") ) {
             doUpload(conn, line);
         }

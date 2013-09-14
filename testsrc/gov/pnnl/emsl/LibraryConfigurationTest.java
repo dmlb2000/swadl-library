@@ -12,8 +12,8 @@ import org.junit.Test;
  * 
  * @author dmlb2000
  */
-public class ConfigTest {
-    Configuration test;
+public class LibraryConfigurationTest {
+    LibraryConfiguration test;
     File temp;
 
     /**
@@ -22,13 +22,13 @@ public class ConfigTest {
      * 
      * @throws IOException
      */
-    public ConfigTest() throws IOException {
+    public LibraryConfigurationTest() throws IOException {
         temp = File.createTempFile("temp",".ini");
         temp.deleteOnExit();
         BufferedWriter writer = new BufferedWriter(new FileWriter(temp));
         writer.write("[client]\nproto=https\nserver=a4.my.emsl.pnl.gov\nservices=myemsl/services\n");
         writer.close();
-        test = new Configuration(temp.getAbsolutePath());
+        test = new LibraryConfiguration(temp.getAbsolutePath());
     }
 
     /**

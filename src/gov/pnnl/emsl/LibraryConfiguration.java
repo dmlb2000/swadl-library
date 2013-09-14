@@ -7,14 +7,14 @@ import org.ini4j.Ini;
 import org.ini4j.IniPreferences;
 
 /**
- * Configuration object to hold URLs from the main MyEMSL configuration file.
+ * LibraryConfiguration object to hold URLs from the main MyEMSL configuration file.
  * 
  * This class is responsible for parsing the general.ini file or a custom ini
  * file and allowing programatic access to the data stored in the ini file.
  *
  * @author dmlb2000
  */
-public class Configuration {
+public class LibraryConfiguration {
     IniPreferences prefs;
 
     /**
@@ -22,7 +22,7 @@ public class Configuration {
      * 
      * @throws IOException
      */
-    public Configuration() throws IOException {
+    public LibraryConfiguration() throws IOException {
         Ini config = new Ini(new File("/etc/myemsl/general.ini"));
         prefs = new IniPreferences(config);
     }
@@ -33,7 +33,7 @@ public class Configuration {
      * @param filename config ini for class to use.
      * @throws IOException
      */
-    public Configuration(String filename) throws IOException {
+    public LibraryConfiguration(String filename) throws IOException {
         Ini config = new Ini(new File(filename));
         prefs = new IniPreferences(config);
     }
