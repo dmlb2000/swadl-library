@@ -1,10 +1,8 @@
 package gov.pnnl.emsl.PacificaLibrary;
 
-import gov.pnnl.emsl.PacificaLibrary.LibraryConfiguration;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import org.junit.Test;
 
 /**
@@ -23,13 +21,9 @@ public class LibraryConfigurationTest {
      * 
      * @throws IOException
      */
-    public LibraryConfigurationTest() throws IOException {
-        temp = File.createTempFile("temp",".ini");
-        temp.deleteOnExit();
-        BufferedWriter writer = new BufferedWriter(new FileWriter(temp));
-        writer.write("[client]\nproto=https\nserver=a4.my.emsl.pnl.gov\nservices=myemsl/services\n");
-        writer.close();
-        test = new LibraryConfiguration(temp.getAbsolutePath());
+    public LibraryConfigurationTest() throws Exception {
+        String inistr = "[client]\nproto=https\nserver=a4.my.emsl.pnl.gov\nservices=myemsl/services\n";
+        test = new LibraryConfiguration(new ByteArrayInputStream(inistr.getBytes()));
     }
 
     /**
