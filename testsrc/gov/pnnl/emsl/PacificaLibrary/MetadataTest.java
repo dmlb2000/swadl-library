@@ -1,5 +1,8 @@
-package gov.pnnl.emsl;
+package gov.pnnl.emsl.PacificaLibrary;
 
+import gov.pnnl.emsl.PacificaLibrary.Metadata;
+import gov.pnnl.emsl.PacificaLibrary.FileMetaData;
+import gov.pnnl.emsl.PacificaLibrary.GroupMetaData;
 import org.junit.Test;
 
 /**

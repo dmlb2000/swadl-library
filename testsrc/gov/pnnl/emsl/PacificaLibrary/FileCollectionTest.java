@@ -1,6 +1,10 @@
-package gov.pnnl.emsl;
+package gov.pnnl.emsl.PacificaLibrary;
 
 
+import gov.pnnl.emsl.PacificaLibrary.Metadata;
+import gov.pnnl.emsl.PacificaLibrary.FileMetaData;
+import gov.pnnl.emsl.PacificaLibrary.GroupMetaData;
+import gov.pnnl.emsl.PacificaLibrary.FileCollection;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;

@@ -1,5 +1,6 @@
-package gov.pnnl.emsl;
+package gov.pnnl.emsl.PacificaLibrary;
 
+import gov.pnnl.emsl.PacificaLibrary.LibraryConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.io.BufferedWriter;

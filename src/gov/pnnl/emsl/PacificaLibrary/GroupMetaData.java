@@ -1,4 +1,4 @@
-package gov.pnnl.emsl;
+package gov.pnnl.emsl.PacificaLibrary;
 
 /**
  * Group metadata class contains the key value pairs that define metadata for

@@ -1,6 +1,12 @@
-package gov.pnnl.emsl;
+package gov.pnnl.emsl.PacificaLibrary;
 
 
+import gov.pnnl.emsl.PacificaLibrary.Metadata;
+import gov.pnnl.emsl.PacificaLibrary.Connect;
+import gov.pnnl.emsl.PacificaLibrary.FileMetaData;
+import gov.pnnl.emsl.PacificaLibrary.GroupMetaData;
+import gov.pnnl.emsl.PacificaLibrary.FileCollection;
+import gov.pnnl.emsl.PacificaLibrary.LibraryConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.io.BufferedWriter;

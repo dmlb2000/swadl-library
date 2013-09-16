@@ -1,7 +1,8 @@
-package gov.pnnl.emsl;
+package gov.pnnl.emsl.PacificaLibrary;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.ini4j.Ini;
 import org.ini4j.IniPreferences;
@@ -38,6 +39,16 @@ public class LibraryConfiguration {
         prefs = new IniPreferences(config);
     }
 
+    /**
+     * Create an ini prefs file from an input stream.
+     * 
+     * @param input
+     * @throws Exception
+     */
+    public LibraryConfiguration(InputStream input) throws Exception {
+        prefs = new IniPreferences(input);
+    }
+    
     /**
      * Return the path to the services XML service.
      * @return String to the services XML service.
