@@ -13,7 +13,7 @@ import java.util.List;
  * Essentially, this is just a container class to make sure the JSON comes out
  * right.
  * 
- * @author David ML Brown Jr.
+ * @author David ML Brown Jr. <dmlb2000@gmail.com>
  */
 public class MetadataContainer {
     /**

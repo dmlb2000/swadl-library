@@ -18,7 +18,7 @@ import org.apache.commons.codec.binary.Hex;
  * This class should maintain an object describing the metadata for the files
  * and generate a tar file of that files including metadata.
  * 
- * @author David ML Brown Jr.
+ * @author David ML Brown Jr. <dmlb2000@gmail.com>
  */
 public class FileCollection {
     Metadata md;

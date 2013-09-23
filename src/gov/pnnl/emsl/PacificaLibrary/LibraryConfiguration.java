@@ -13,7 +13,7 @@ import org.ini4j.IniPreferences;
  * This class is responsible for parsing the general.ini file or a custom ini
  * file and allowing programatic access to the data stored in the ini file.
  *
- * @author David ML Brown Jr.
+ * @author David ML Brown Jr. <dmlb2000@gmail.com>
  */
 public class LibraryConfiguration {
     IniPreferences prefs;

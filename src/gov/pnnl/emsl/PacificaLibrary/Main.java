@@ -30,7 +30,7 @@ import org.apache.commons.cli.Option;
  * span all aspects of the library. However, the main function is to either
  * upload or download data.
  * 
- * @author David ML Brown Jr.
+ * @author David ML Brown Jr. <dmlb2000@gmail.com>
  */
 public class Main {
     /**

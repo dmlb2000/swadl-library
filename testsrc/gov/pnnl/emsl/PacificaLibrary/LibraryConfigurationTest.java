@@ -9,7 +9,7 @@ import org.junit.Test;
  * Test the configuration object by creating a basic config ini file and
  * making sure the code returns the right thing.
  * 
- * @author David ML Brown Jr.
+ * @author David ML Brown Jr. <dmlb2000@gmail.com>
  */
 public class LibraryConfigurationTest {
     LibraryConfiguration test;

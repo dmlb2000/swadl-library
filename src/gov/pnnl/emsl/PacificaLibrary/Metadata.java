@@ -6,7 +6,7 @@ import com.google.gson.Gson;
  * This metadata class is responsible for creating the text of the metadata file
  * from the hierarchy of classes.
  * 
- * @author David ML Brown Jr.
+ * @author David ML Brown Jr. <dmlb2000@gmail.com>
  */
 public class Metadata {
 
