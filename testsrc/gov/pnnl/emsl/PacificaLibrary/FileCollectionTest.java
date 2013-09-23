@@ -16,7 +16,7 @@ import org.junit.Test;
  * 
  * This test class should call the tarit method and make sure it works.
  * 
- * @author dmlb2000
+ * @author David ML Brown Jr.
  */
 public class FileCollectionTest {
     

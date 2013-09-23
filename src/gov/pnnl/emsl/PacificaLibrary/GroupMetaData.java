@@ -4,7 +4,7 @@ package gov.pnnl.emsl.PacificaLibrary;
  * Group metadata class contains the key value pairs that define metadata for
  * MyEMSL.
  * 
- * @author dmlb2000
+ * @author David ML Brown Jr.
  */
 public class GroupMetaData {
     /**

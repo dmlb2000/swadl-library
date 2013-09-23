@@ -70,7 +70,7 @@ import org.apache.http.entity.InputStreamEntity;
  * Main connect object that integrates all other classes to communicate with the
  * MyEMSL server.
  * 
- * @author dmlb2000
+ * @author David ML Brown Jr.
  */
 public class Connect {
 

@@ -14,7 +14,7 @@ import java.io.OutputStream;
  * Just use this to write what you want and get the length of what
  * was written without creating copies.
  * 
- * @author dmlb2000
+ * @author David ML Brown Jr.
  */
 public class NullOutputStream extends OutputStream {
     private long length;

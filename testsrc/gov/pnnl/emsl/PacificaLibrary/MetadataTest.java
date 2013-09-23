@@ -7,7 +7,7 @@ import org.junit.Test;
 
 /**
  * Metadata object testing consist of making sure the metadata text exists.
- * @author dmlb2000
+ * @author David ML Brown Jr.
  */
 public class MetadataTest {
     /**

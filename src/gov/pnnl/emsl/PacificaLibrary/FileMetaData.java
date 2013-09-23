@@ -12,7 +12,7 @@ import java.util.List;
  * Should contain the sha1sum, file name, destination directory and metadata
  * groups at a minimum.
  * 
- * @author dmlb2000
+ * @author David ML Brown Jr.
  */
 public class FileMetaData {
     /**

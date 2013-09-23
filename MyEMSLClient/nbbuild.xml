@@ -94,4 +94,10 @@
             </manifest>
         </jar>
     </target>
+    <target name="htmldoc" depends="javadoc">
+        <exec executable="bash">
+            <arg value="htmldoc.sh"/>
+            <arg value="${application.title}"/>
+        </exec>
+    </target>
 </project>

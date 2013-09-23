@@ -26,7 +26,7 @@ import org.junit.Test;
  * 
  * The testing class should test connection, query, upload and download.
  * 
- * @author dmlb2000
+ * @author David ML Brown Jr.
  */
 public class ConnectTest {
 
