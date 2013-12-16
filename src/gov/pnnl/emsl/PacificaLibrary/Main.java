@@ -33,6 +33,9 @@ import org.apache.commons.cli.Option;
  * @author David ML Brown Jr. <dmlb2000@gmail.com>
  */
 public class Main {
+    
+    int debug_level;
+    
     /**
      * Main method does mostly option parsing and setting up some initial
      * variables to pass onto the upload or download methods.
@@ -76,7 +79,7 @@ public class Main {
         OptionBuilder.withDescription( "server to query from" );
         OptionBuilder.hasArg();
         OptionBuilder.withArgName("HOST");
-        options.addOption(OptionBuilder.create('g'));
+        options.addOption(OptionBuilder.create('q'));
         OptionBuilder.withLongOpt( "server" );
         OptionBuilder.withDescription( "server to upload to or download from" );
         OptionBuilder.hasArg();
@@ -202,5 +205,12 @@ public class Main {
             bwout.close();
         }
         conn.logout();
+    }
+
+    /**
+     * Default constructor with initializations.
+     */
+    public Main() {
+        this.debug_level = 0;
     }
 }
