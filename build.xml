@@ -33,7 +33,7 @@
         <mkdir dir="${jar.dir}"/>
         <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}" id="library">
             <manifest>
-                <attribute name="Main-Class" value="gov.pnnl.emsl.my.MyEMSLMain"/>
+                <attribute name="Main-Class" value="gov.pnnl.emsl.SWADL.Main"/>
             </manifest>
         </jar>
     </target>
@@ -54,8 +54,9 @@
             <zipfileset src="${lib.dir}/jtar-2.2.jar" includes="**/*.java **/*.class"/>
             <zipfileset src="${lib.dir}/javatuples-1.2.jar" includes="**/*.java **/*.class"/>
             <zipfileset src="${lib.dir}/commons-cli-1.2.jar" includes="**/*.java **/*.class"/>
+            <zipfileset src="${lib.dir}/jargon-core-3.3.2-beta2-jar-with-dependencies.jar" includes="**/*.java **/*.class"/>
             <manifest>
-                <attribute name="Main-Class" value="gov.pnnl.emsl.my.MyEMSLMain"/>
+                <attribute name="Main-Class" value="gov.pnnl.emsl.SWADL.Main"/>
             </manifest>
         </jar>
     </target>
