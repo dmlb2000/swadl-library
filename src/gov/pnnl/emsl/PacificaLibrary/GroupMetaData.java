@@ -1,20 +1,22 @@
 package gov.pnnl.emsl.PacificaLibrary;
 
+import gov.pnnl.emsl.SWADL.Group;
+
 /**
  * Group metadata class contains the key value pairs that define metadata for
  * MyEMSL.
  * 
  * @author David ML Brown Jr. <dmlb2000@gmail.com>
  */
-public class GroupMetaData {
+public class GroupMetaData implements Group {
     /**
-     * Name is the user defined value of the metadata pair.
+     * The defined key for the metadata.
      */
-    public String name;
+    private String key;
     /**
-     * type is the system defined set of keys for the metadata pair.
+     * The user given value associated key.
      */
-    public String type;
+    private String value;
 
     /**
      * Constructor for group metadata object.
@@ -26,9 +28,14 @@ public class GroupMetaData {
      * @param name
      * @param type
      */
-    public GroupMetaData(String name, String type) {
-        this.name = name;
-        this.type = type;
+    public GroupMetaData(String key, String value) {
+        this.key = key;
+        this.value = value;
     }
+
+    public getKey(void) { return this.key; }
+    public getValue(void) { return this.value; }
+    public setKey(String k) { this.key = k; }
+    public setValue(String v) { this.value = v; }
 }
 
