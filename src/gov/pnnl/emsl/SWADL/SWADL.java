@@ -2,7 +2,9 @@ package gov.pnnl.emsl.SWADL;
 
 import gov.pnnl.emsl.SWADL.UploadHandle;
 import gov.pnnl.emsl.SWADL.File;
-import gov.pnnl.emsl.SWADL.Group
+import gov.pnnl.emsl.SWADL.Group;
+
+import java.io.Writer;
 import java.util.List;
 /**
  *

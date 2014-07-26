@@ -1,27 +1,29 @@
 package gov.pnnl.emsl.PacificaLibrary;
 
 
-import java.io.File;
-import java.io.Console;
-import java.io.IOException;
 import java.io.BufferedWriter;
+import java.io.Console;
+import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
-import java.net.URISyntaxException;
-import javax.xml.parsers.ParserConfigurationException;
-import org.xml.sax.SAXException;
-import javax.xml.xpath.XPathExpressionException;
-import org.javatuples.Triplet;
 import java.util.ArrayList;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.CommandLineParser;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
+
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.javatuples.Triplet;
+import org.xml.sax.SAXException;
 
 /**
  * This is the main class to have a main method.

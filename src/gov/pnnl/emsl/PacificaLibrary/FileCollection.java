@@ -1,18 +1,19 @@
 package gov.pnnl.emsl.PacificaLibrary;
 
-import org.kamranzafar.jtar.TarOutputStream;
-import org.kamranzafar.jtar.TarEntry;
-import org.kamranzafar.jtar.TarHeader;
-import java.io.OutputStream;
-import java.io.File;
-import java.io.BufferedOutputStream;
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
 import org.apache.commons.codec.binary.Hex;
+import org.kamranzafar.jtar.TarEntry;
+import org.kamranzafar.jtar.TarHeader;
+import org.kamranzafar.jtar.TarOutputStream;
 
 /**
  * This class should maintain an object describing the metadata for the files
