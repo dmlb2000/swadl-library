@@ -6,14 +6,17 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.irods.jargon.core.connection.IRODSAccount;
 import org.irods.jargon.core.connection.auth.AuthResponse;
+import org.irods.jargon.core.pub.DataTransferOperations;
 import org.irods.jargon.core.pub.IRODSAccessObjectFactory;
 import org.irods.jargon.core.pub.IRODSFileSystem;
 import org.irods.jargon.core.pub.IRODSGenQueryExecutor;
+import org.irods.jargon.core.pub.io.IRODSFile;
+import org.irods.jargon.core.pub.io.IRODSFileFactory;
 import org.irods.jargon.core.query.IRODSGenQuery;
 import org.irods.jargon.core.query.IRODSQueryResultSet;
-import org.irods.jargon.core.query.RodsGenQueryEnum;
 
 import gov.pnnl.emsl.SWADL.File;
 import gov.pnnl.emsl.SWADL.Group;
@@ -29,14 +32,50 @@ public class Connect implements SWADL {
 	
 	public Connect(LibraryConfiguration config) throws Exception {
 		this.config = config;
+		this.config.setPrefix("/"+config.getZone()+"/SWADL");
 		this.irodsFileSystem = IRODSFileSystem.instance();
 		this.irodsAccessObjectFactory = irodsFileSystem.getIRODSAccessObjectFactory();
 	}
 	
+	private Integer latestTransaction() throws Exception {
+		IRODSFileFactory ff = this.irodsAccessObjectFactory.getIRODSFileFactory(this.account);
+		IRODSFile prefix = ff.instanceIRODSFile(config.getPrefix());
+		Integer l = 0;
+		for(String s: prefix.list()) {
+			try {
+				Integer t = Integer.parseInt(s);
+				if (l < t) {
+					l = t;
+				}
+			} finally {}
+		}
+		return l;
+	}
+	
+	private String latestTransactionCollection() throws Exception {
+		return config.getPrefix()+"/"+this.latestTransaction().toString();
+	}
+	
+	/*
+	 * pick a location in iRODS to put files.
+	 */
+	private String generateTransactionCollection() throws Exception {
+		Integer t = latestTransaction();
+		t++;
+		return config.getPrefix()+"/"+t.toString();
+	}
+	
 	@Override
 	public UploadHandle uploadAsync(List<File> files) throws Exception {
-		
-		return null;
+		IRODSFileFactory ff = this.irodsAccessObjectFactory.getIRODSFileFactory(this.account);
+		IRODSFile transCollection = ff.instanceIRODSFile(generateTransactionCollection());
+		DataTransferOperations dto = this.irodsAccessObjectFactory.getDataTransferOperations(this.account);
+		for(File f: files){
+			dto.putOperation(f.getLocalName(), config.getPrefix(), null, null, null);
+			IRODSFile of = irodsFileSystem.getIRODSFileFactory(this.account).instanceIRODSFile(transCollection.getAbsoluteFile()+"/"+f.getName());
+			dto.physicalMove(of.getAbsolutePath(), null);
+		}
+		return new StatusHandler();
 	}
 
 	@Override
@@ -50,7 +89,11 @@ public class Connect implements SWADL {
 		String queryString = "select "
 				+ "COLL_NAME"
 				+ ","
-				+ "DATA_NAME";
+				+ "COLL_ID"
+				+ ","
+				+ "DATA_NAME"
+				+ ","
+				+ "DATA_ID";
 		if (groups != null && groups.size() > 0) {
 			queryString += " where ";
 			ArrayList<String> whereClause = new ArrayList<String>(); 
@@ -82,7 +125,7 @@ public class Connect implements SWADL {
 	public void login(String username, String password) throws Exception {
 		// TODO Auto-generated method stub
 		this.account = IRODSAccount.instance(this.config.getHost(), this.config.getPort(), username, password, "/", this.config.getZone(), "demoResc");
-		AuthResponse resp =  irodsAccessObjectFactory.authenticateIRODSAccount(a);
+		AuthResponse resp =  irodsAccessObjectFactory.authenticateIRODSAccount(this.account);
 		Assert.assertNotNull("no auth response", resp);
 	}
 

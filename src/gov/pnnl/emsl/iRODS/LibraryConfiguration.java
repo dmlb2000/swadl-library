@@ -4,6 +4,9 @@ public class LibraryConfiguration {
 	private String host;
 	private Integer port;
 	private String zone;
+	
+	private String prefix;
+	
 	public String getHost() {
 		return host;
 	}
@@ -21,5 +24,11 @@ public class LibraryConfiguration {
 	}
 	public void setZone(String zone) {
 		this.zone = zone;
+	}
+	public String getPrefix() {
+		return prefix;
+	}
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
 	}
 }
