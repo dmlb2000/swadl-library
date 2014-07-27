@@ -35,7 +35,7 @@
         <mkdir dir="${jar.dir}"/>
         <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}" id="library">
             <manifest>
-                <attribute name="Main-Class" value="gov.pnnl.emsl.SWADL.Main"/>
+                <attribute name="Main-Class" value="gov.pnnl.emsl.SWADLcli.Main"/>
             </manifest>
         </jar>
     </target>
@@ -59,7 +59,7 @@
             <zipfileset src="${lib.dir}/commons-lang3-3.3.2.jar" includes="**/*.java **/*.class"/>
             <zipfileset src="${lib.dir}/jargon-core-3.3.2-beta2-jar-with-dependencies.jar" includes="**/*.java **/*.class"/>
             <manifest>
-                <attribute name="Main-Class" value="gov.pnnl.emsl.SWADL.Main"/>
+                <attribute name="Main-Class" value="gov.pnnl.emsl.SWADLcli.Main"/>
             </manifest>
         </jar>
     </target>
