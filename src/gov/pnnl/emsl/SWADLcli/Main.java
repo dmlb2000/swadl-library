@@ -179,10 +179,10 @@ public class Main {
             return;
         }
         String password = new String (console.readPassword ("Enter password: "));
-        if( backend == "myemsl") {
+        if( backend.equals("myemsl")) {
         	conn = new Connect(new LibraryConfiguration(config.getAbsolutePath()), username, password);
         }
-        else if (backend == "irods" ){
+        else if (backend.equals("irods")){
         	gov.pnnl.emsl.iRODS.LibraryConfiguration c = new gov.pnnl.emsl.iRODS.LibraryConfiguration();
         	c.setHost(server);
         	c.setZone(zone);
