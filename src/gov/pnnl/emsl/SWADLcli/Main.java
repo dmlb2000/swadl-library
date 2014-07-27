@@ -62,12 +62,23 @@ public class Main {
         String username;
         String server = "my.emsl.pnl.gov";
         String qserver = "my.emsl.pnl.gov";
+        String backend = "myemsl";
+        String zone = "myemsl";
         SWADL conn;
 
         File config;
 
         Options options = new Options();
-        final Option tmpopt;
+        OptionBuilder.withLongOpt( "backend" );
+        OptionBuilder.withDescription( "backend to talk to" );
+        OptionBuilder.hasArg();
+        OptionBuilder.withArgName("BACKEND");
+        options.addOption(OptionBuilder.create('b'));
+        OptionBuilder.withLongOpt( "zone" );
+        OptionBuilder.withDescription( "irods zone" );
+        OptionBuilder.hasArg();
+        OptionBuilder.withArgName("ZONE");
+        options.addOption(OptionBuilder.create('z'));
         OptionBuilder.withLongOpt( "file" );
         OptionBuilder.withDescription( "filename to include" );
         OptionBuilder.hasOptionalArgs();
@@ -117,6 +128,15 @@ public class Main {
             System.err.println( "Parsing failed.  Reason: " + exp.getMessage() );
         }
         if( line == null) { return; }
+        if( line.hasOption("b")) {
+        	backend = line.getOptionValue("b");
+        }
+        else {
+        	backend = "myemsl";
+        }
+        if (line.hasOption('z')) {
+        	zone = line.getOptionValue('z');
+        }
         if( line.hasOption("h") ) {
             HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp( "MyEMSLClientCmd", options );
@@ -161,7 +181,21 @@ public class Main {
             return;
         }
         String password = new String (console.readPassword ("Enter password: "));
-        conn = new Connect(new LibraryConfiguration(config.getAbsolutePath()), username, password);
+        if( backend == "myemsl") {
+        	conn = new Connect(new LibraryConfiguration(config.getAbsolutePath()), username, password);
+        }
+        else if (backend == "irods" ){
+        	gov.pnnl.emsl.iRODS.LibraryConfiguration c = new gov.pnnl.emsl.iRODS.LibraryConfiguration();
+        	c.setHost(server);
+        	c.setZone(zone);
+        	c.setPort(1247);
+        	conn = new gov.pnnl.emsl.iRODS.Connect(c);
+        	conn.login(username, password);
+        }
+        else {
+        	System.err.println("Need to specify backend to use [myemsl|irods].");
+        	return;
+        }
         if ( line.hasOption("f") ) {
             doUpload(conn, line);
         }
