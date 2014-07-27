@@ -7,4 +7,6 @@ package gov.pnnl.emsl.SWADL;
  *
  */
 public interface UploadHandle {
+	public void setTimeout(Integer timeout);
+	public Integer getTimeout();
 }

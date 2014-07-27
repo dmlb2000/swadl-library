@@ -1,33 +1,51 @@
 package gov.pnnl.emsl.SWADL;
 
 /**
- * Group metadata interface consists of key and value.
+ * Group metadata class contains the key value pairs that define metadata for
+ * MyEMSL.
  * 
- * @author dmlb2000
+ * @author David ML Brown Jr. <dmlb2000@gmail.com>
  */
-public interface Group {
+public class Group {
     /**
-     * Returns the key for this group
-     * 
-     * @return key
+     * The defined key for the metadata.
      */
-    String getKey() throws Exception;
+    private String key;
     /**
-     * Returns the value for this group
-     * 
-     * @return value
+     * The user given value associated key.
      */
-    String getValue() throws Exception;
+    private String value;
+
     /**
-     * Set the key for this group
+     * Constructor for group metadata object.
      * 
-     * @param key
-     */
-    void setKey(String key) throws Exception;
-    /**
-     * Set the value for this group
+     * The name, type thing is a bit weird and is synonymous with type = key
+     * and name = value. If you are thinking things are key value pairs, which
+     * it is.
      * 
-     * @param value
+     * @param name
+     * @param type
      */
-    void setValue(String value) throws Exception;
+    public Group(String key, String value) {
+        this.key = key;
+        this.value = value;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.pnnl.emsl.SWADL.Group#getKey()
+     */
+    public String getKey() { return this.key; }
+    /* (non-Javadoc)
+     * @see gov.pnnl.emsl.SWADL.Group#getValue()
+     */
+    public String getValue() { return this.value; }
+    /* (non-Javadoc)
+     * @see gov.pnnl.emsl.SWADL.Group#setKey(java.lang.String)
+     */
+    public void setKey(String k) { this.key = k; }
+    /* (non-Javadoc)
+     * @see gov.pnnl.emsl.SWADL.Group#setValue(java.lang.String)
+     */
+    public void setValue(String v) { this.value = v; }
 }
+

@@ -6,7 +6,6 @@ import gov.pnnl.emsl.SWADL.Group;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Metadata object for a single file.
@@ -16,30 +15,14 @@ import java.util.List;
  * 
  * @author David ML Brown Jr. <dmlb2000@gmail.com>
  */
-public class FileMetaData implements gov.pnnl.emsl.SWADL.File {
+public class FileMetaData extends gov.pnnl.emsl.SWADL.File {
 	
     /**
      * sha1Hash should contain the sha1sum for the file.
      */
     public String sha1Hash;
-    /**
-     * fileName is the string containing the basename of the file.
-     */
-    public String fileName;
-    /**
-     * destinationDirectory is the dirname of the file.
-     */
     public String destinationDirectory;
-    /**
-     * localFilePath is the local path of the file on the file system.
-     */
-    public String localFilePath;
-    /**
-     * groups are the metadata groups for the file.
-     */
-    public List<Group> groups;
-	private FileAuthInfo authinfo;
-
+  
     /**
      * Constructor should store the parameters given into the object.
      * 
@@ -53,32 +36,14 @@ public class FileMetaData implements gov.pnnl.emsl.SWADL.File {
      * @param hash String of the hash sum of the file.
      */
     public FileMetaData(String filename, String localpath, String hash, FileAuthInfo authinfo) {
-    	this.authinfo = authinfo;
+    	this.finfo = authinfo;
         File f = new File(filename);
         this.sha1Hash = hash;
-        this.localFilePath = localpath;
-        this.fileName = f.getName();
+        this.localFilename = localpath;
+        this.filename = f.getName();
         this.destinationDirectory = f.getParent();
         if(this.destinationDirectory == null) { this.destinationDirectory = ""; }
         this.groups = new ArrayList<Group>();
     }
-
-	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		return this.fileName;
-	}
-
-	@Override
-	public List<Group> getGroups() {
-		// TODO Auto-generated method stub
-		return this.groups;
-	}
-
-	@Override
-	public FileAuthInfo getAuthInfo() {
-		// TODO Auto-generated method stub
-		return this.authinfo;
-	}
 }
 

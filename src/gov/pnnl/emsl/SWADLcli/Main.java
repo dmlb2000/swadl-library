@@ -1,7 +1,10 @@
-package gov.pnnl.emsl.SWADL;
+package gov.pnnl.emsl.SWADLcli;
 
 import gov.pnnl.emsl.PacificaLibrary.Connect;
 import gov.pnnl.emsl.PacificaLibrary.LibraryConfiguration;
+import gov.pnnl.emsl.SWADL.Group;
+import gov.pnnl.emsl.SWADL.SWADL;
+import gov.pnnl.emsl.SWADL.UploadHandle;
 
 import java.io.BufferedWriter;
 import java.io.Console;
@@ -12,6 +15,7 @@ import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -54,7 +58,7 @@ public class Main {
      * @throws XPathExpressionException
      * @throws InterruptedException
      */
-    public static void main(String[] args) throws IOException, GeneralSecurityException, URISyntaxException, ParserConfigurationException, SAXException, NoSuchAlgorithmException, XPathExpressionException, InterruptedException {
+    public static void main(String[] args) throws Exception {
         String username;
         String server = "my.emsl.pnl.gov";
         String qserver = "my.emsl.pnl.gov";
@@ -166,17 +170,19 @@ public class Main {
         }
     }
 
-    private static void doUpload(Connect conn, CommandLine line) throws IOException, SAXException, ParserConfigurationException, SAXException, NoSuchAlgorithmException, XPathExpressionException, InterruptedException {
-        FileCollection col;
-        Metadata md;
-
-        md = new Metadata();
+    private static void doUpload(SWADL conn, CommandLine line) throws Exception {
+    	List<gov.pnnl.emsl.SWADL.File> files = new ArrayList<gov.pnnl.emsl.SWADL.File>();
+    	
         for(String s:line.getOptionValues("file")) {
-            FileMetaData afmd = new FileMetaData(s, s, "hashforfilea", null);
+            gov.pnnl.emsl.SWADL.File afmd = new gov.pnnl.emsl.SWADL.File();
+            afmd.setLocalName(s);
+            afmd.setName(s);
+            List<Group> groups = new ArrayList<Group>();
             for(String g:line.getOptionValues("group")) {
-                afmd.groups.add(new GroupMetaData(g.split("=")[1], g.split("=")[0]));
+                groups.add(new Group(g.split("=")[0], g.split("=")[1]));
             }
-            md.md.file.add(afmd);
+            afmd.setGroups(groups);
+            files.add(afmd);
         }
 
         Integer timeout = 15;
@@ -184,28 +190,29 @@ public class Main {
             timeout = new Integer(line.getOptionValue("timeout"));
         }
 
-        col = new FileCollection(md);
-        conn.status_wait(conn.upload(col), timeout, 5);
+        UploadHandle h = conn.uploadAsync(files);
+        h.setTimeout(timeout);
+        conn.uploadWait(h);
         conn.logout();
     }
 
-    private static void doDownload(Connect conn, CommandLine line) throws IOException, SAXException, XPathExpressionException {
+    private static void doDownload(SWADL conn, CommandLine line) throws Exception {
         String destdir = line.getOptionValue("d");
         File ofile;
         File odir;
-        ArrayList<GroupMetaData> qset = new ArrayList<GroupMetaData>();
+        List<Group> qset = new ArrayList<Group>();
 
         for(String g:line.getOptionValues("group")) {
-            qset.add(new GroupMetaData(g.split("=")[1], g.split("=")[0]));
+            qset.add(new Group(g.split("=")[0], g.split("=")[1]));
         }
-        ArrayList<Triplet<Integer,String,String>> items = conn.query(qset);
-        for(Triplet<Integer,String,String> i: items) {
-            System.out.println(destdir+i.getValue1());
-            ofile = new File(destdir+i.getValue1());
+        List<gov.pnnl.emsl.SWADL.File> items = conn.query(qset);
+        for(gov.pnnl.emsl.SWADL.File i: items) {
+            System.out.println(destdir+i.getName());
+            ofile = new File(destdir+i.getName());
             odir = new File(ofile.getParent());
             odir.mkdirs();
             BufferedWriter bwout = new BufferedWriter(new FileWriter(ofile));
-            conn.getitem(bwout, i);
+            conn.getFile(bwout, i);
             bwout.close();
         }
         conn.logout();

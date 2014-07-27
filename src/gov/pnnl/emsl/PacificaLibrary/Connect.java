@@ -181,7 +181,11 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
     public UploadHandle upload(List<File> files) throws Exception {
     	Metadata md = new Metadata();
     	final FileCollection fcol = new FileCollection(md);
-    	md.md.file = files;
+    	for(File f: files) {
+    		FileMetaData mf = new FileMetaData(f.getName(), f.getLocalName(), "", null);
+    		mf.setGroups(f.getGroups());
+    		md.md.file.add(mf);
+    	}
         NullOutputStream ostream = new NullOutputStream();
         fcol.tarit(ostream);
         long length = ostream.getLength();
@@ -204,10 +208,9 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
                     public void run(){
                         try {
                             fcol.tarit(out);
-                        } catch (IOException ex) {
+                        } catch (Exception ex) {
                             Logger.getLogger(Connect.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (NoSuchAlgorithmException ex) {
-                            Logger.getLogger(Connect.class.getName()).log(Level.SEVERE, null, ex);
+                        
                         }
                     }
                 }

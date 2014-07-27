@@ -45,7 +45,7 @@ public class FileCollection {
      * @throws FileNotFoundException
      * @throws NoSuchAlgorithmException
      */
-    public void tarit(OutputStream out) throws IOException, FileNotFoundException, NoSuchAlgorithmException {
+    public void tarit(OutputStream out) throws Exception {
         TarOutputStream tarout = new TarOutputStream( new BufferedOutputStream( out ) );
         MessageDigest cript = MessageDigest.getInstance("SHA-1");
         for(gov.pnnl.emsl.SWADL.File sf:md.md.file) {
@@ -53,11 +53,11 @@ public class FileCollection {
             cript.reset();
             File fd;
             if(!f.destinationDirectory.equals("")) {
-                fd = new File(f.localFilePath);
-                tarout.putNextEntry(new TarEntry(fd, f.destinationDirectory + "/" + f.fileName));
+                fd = new File(f.getLocalName());
+                tarout.putNextEntry(new TarEntry(fd, f.destinationDirectory + "/" + f.getName()));
             } else {
-                fd = new File(f.localFilePath);
-                tarout.putNextEntry(new TarEntry(fd, f.fileName));
+                fd = new File(f.getLocalName());
+                tarout.putNextEntry(new TarEntry(fd, f.getName()));
             }
             BufferedInputStream origin = new BufferedInputStream(new FileInputStream(fd));
             int count;
