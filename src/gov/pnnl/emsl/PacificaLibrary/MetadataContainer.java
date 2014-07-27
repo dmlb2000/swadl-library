@@ -1,5 +1,7 @@
 package gov.pnnl.emsl.PacificaLibrary;
 
+import gov.pnnl.emsl.SWADL.File;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +21,7 @@ public class MetadataContainer {
     /**
      * file is a list of files and the associated metadata for those files.
      */
-    public List<FileMetaData> file;
+    public List<File> file;
     /**
      * version is a specific string required by the upload API.
      */
@@ -30,7 +32,7 @@ public class MetadataContainer {
      */
     public MetadataContainer() {
         this.version = "1.0.0";
-        file = new ArrayList<FileMetaData>();
+        file = new ArrayList<File>();
     }
 }
 

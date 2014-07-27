@@ -1,13 +1,17 @@
 package gov.pnnl.emsl.PacificaLibrary;
 
+import gov.pnnl.emsl.SWADL.File;
+import gov.pnnl.emsl.SWADL.Group;
+import gov.pnnl.emsl.SWADL.UploadHandle;
+
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
@@ -54,7 +58,6 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
-import org.javatuples.Triplet;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -68,7 +71,7 @@ import org.xml.sax.SAXException;
  * 
  * @author David ML Brown Jr. <dmlb2000@gmail.com>
  */
-public class Connect {
+public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
 
     LibraryConfiguration config;
     String server;
@@ -86,7 +89,7 @@ public class Connect {
         return this.read_http_entity(entity, null);
     }
 
-    private String read_http_entity(HttpEntity entity, BufferedWriter out) throws IOException {
+    private String read_http_entity(HttpEntity entity, Writer bwout) throws IOException {
         String ret = "";
         char [] buf = new char[1024];
         Integer got;
@@ -94,18 +97,17 @@ public class Connect {
         total = 0;
         if (entity != null) {
             BufferedReader br = new BufferedReader(new InputStreamReader(entity.getContent()));
-            String readLine;
             while(((got = br.read(buf, 0, 1024)) != -1)) {
                 total += got;
-                if(out != null) {
-                    out.write(buf, 0, got);
+                if(bwout != null) {
+                    bwout.write(buf, 0, got);
                 } else {
                     ret += new String(buf, 0, got);
                 }
             }
         }
         EntityUtils.consume(entity);
-        if(out != null)
+        if(bwout != null)
             return total.toString();
         return ret;
     }
@@ -130,22 +132,8 @@ public class Connect {
      * @throws IOException
      * @throws ParserConfigurationException
      */
-    public Connect(LibraryConfiguration config, String username, String password) throws GeneralSecurityException, URISyntaxException, IOException, ParserConfigurationException {
-        /* this sets up a pass through trust manager which is rather insecure
-         * we need to figure out why the default keystore isn't working with
-         * the SSL cert we have on our production systems */
-        X509TrustManager tm = new X509TrustManager() {
-            @Override public void checkClientTrusted(X509Certificate[] xcs, String string) throws CertificateException {}
-            @Override public void checkServerTrusted(X509Certificate[] xcs, String string) throws CertificateException {}
-            @Override public X509Certificate[] getAcceptedIssuers() { return null; }
-        };
-        SSLContext null_ctx = SSLContext.getInstance("TLS");
-        null_ctx.init(null, new TrustManager[]{tm}, null);
-        /* initialize SSL for https */
-        KeyStore trustStore  = KeyStore.getInstance(KeyStore.getDefaultType());
-        SSLSocketFactory socketFactory = new SSLSocketFactory(null_ctx);
-        socketFactory.setHostnameVerifier((X509HostnameVerifier) org.apache.http.conn.ssl.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-        Scheme sch = new Scheme("https", 443, socketFactory);
+    public Connect(LibraryConfiguration config, String username, String password) throws Exception {
+
         /* this is the xml and xpath stuff */
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         this.db = dbf.newDocumentBuilder();
@@ -155,22 +143,7 @@ public class Connect {
         this.localContext = new BasicHttpContext();
         /* create the target host */
         this.config = config;
-        HttpGet httpget = new HttpGet(config.loginurl());
-        this.client = new DefaultHttpClient();
-        client.getConnectionManager().getSchemeRegistry().register(sch);
-        client.getCredentialsProvider().setCredentials(
-            new AuthScope(config.server(), AuthScope.ANY_PORT),
-            new UsernamePasswordCredentials(username, password)
-        );
-        localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
-        HttpResponse response = client.execute(httpget, localContext);
-        Integer resCode = response.getStatusLine().getStatusCode() % 100;
-        switch (resCode) {
-            case 2: break;
-            case 4:
-            case 5: /* throw error */ break;
-        }
-        this.read_http_entity(response.getEntity());
+        this.login(username, password);
     }
 
     /**
@@ -205,7 +178,10 @@ public class Connect {
      * @throws IOException
      * @throws NoSuchAlgorithmException
      */
-    public String upload(final FileCollection fcol) throws IOException, NoSuchAlgorithmException {
+    public UploadHandle upload(List<File> files) throws Exception {
+    	Metadata md = new Metadata();
+    	final FileCollection fcol = new FileCollection(md);
+    	md.md.file = files;
         NullOutputStream ostream = new NullOutputStream();
         fcol.tarit(ostream);
         long length = ostream.getLength();
@@ -251,7 +227,12 @@ public class Connect {
                 status_url = line.split(": ")[1];
         }
         System.out.println(status_url+"/xml");
-        return status_url+"/xml";
+        StatusHandler sturl = new StatusHandler();
+        sturl.status_url = status_url+"/xml";
+        sturl.timeout = 30;
+        sturl.step = 5;
+        UploadHandle ret = sturl;
+        return ret;
     }
 
     /**
@@ -271,17 +252,17 @@ public class Connect {
      * @throws XPathExpressionException
      * @throws InterruptedException
      */
-    public void status_wait(String status_url, Integer timeout, Integer step) throws IOException, SAXException, XPathExpressionException, InterruptedException {
+    public void status_wait(UploadHandle h) throws Exception {
+    	StatusHandler sturl = (StatusHandler) h;
         String status = "NA";
-        String msg = "NA";
         Integer time_check = 0;
-        while(time_check < timeout && !status.equals("SUCCESS"))
+        while(time_check < sturl.timeout && !status.equals("SUCCESS"))
         {
-            HttpGet get_status = new HttpGet(status_url);
+            HttpGet get_status = new HttpGet(sturl.status_url);
             HttpResponse response = client.execute(get_status, localContext);
             String statusxml = this.read_http_entity(response.getEntity());
             Document doc = this.db.parse(new ByteArrayInputStream(statusxml.getBytes("UTF-8")));
-            XPathExpression status_xpath = this.xPath.compile("//step[@id='"+step.toString()+"']/@status");
+            XPathExpression status_xpath = this.xPath.compile("//step[@id='"+sturl.step.toString()+"']/@status");
             NodeList nodeList = (NodeList)status_xpath.evaluate(doc, XPathConstants.NODESET);
             for(int i=0; i<nodeList.getLength(); i++)
             {
@@ -291,7 +272,7 @@ public class Connect {
             Thread.sleep(1 * 1000);
             time_check++;
         }
-        if(time_check == timeout) { throw new InterruptedException("Unable to check for completed upload status."); }
+        if(time_check == sturl.timeout) { throw new InterruptedException("Unable to check for completed upload status."); }
     }
 
     /**
@@ -310,24 +291,23 @@ public class Connect {
      * @throws SAXException
      * @throws XPathExpressionException
      */
-    public ArrayList<Triplet<Integer,String,String>> query(List<GroupMetaData> groups) throws IOException, SAXException, XPathExpressionException {
-        ArrayList<Integer> ret = new ArrayList<Integer>();
+    public List<File> query(List<Group> groups) throws Exception {
         String url = config.queryurl();
-        for(GroupMetaData g: groups) {
-            url += "/group/"+g.type+"/"+g.name;
+        for(Group g: groups) {
+            url += "/group/"+g.getKey()+"/"+g.getValue();
         }
         url += "/data";
         String args = "auth";
         System.out.println(url);
-        ArrayList<Triplet<Integer,String,String>> files = new ArrayList<Triplet<Integer,String,String>>();
+        List<File> files = new ArrayList<File>();
         this.getrec(files, new URL(url), args);
         return files;
     }
 
-    private void getrec(ArrayList<Triplet<Integer,String,String>> ret, URL url, String args) throws IOException, SAXException, XPathExpressionException {
+    private void getrec(List<File> files, URL url, String args) throws IOException, SAXException, XPathExpressionException {
         for(URL d: this.getdirs(url, args))
-            this.getrec(ret, d, args);
-        ret.addAll(this.getfiles(url, args));
+            this.getrec(files, d, args);
+        files.addAll(this.getfiles(url, args));
     }
 
     private ArrayList<URL> getdirs(URL url, String args) throws IOException, SAXException, XPathExpressionException {
@@ -341,8 +321,8 @@ public class Connect {
         return ret;
     }
 
-    private ArrayList<Triplet<Integer,String,String>> getfiles(URL url, String args) throws IOException, SAXException, XPathExpressionException {
-        ArrayList<Triplet<Integer,String,String>> ret = new ArrayList<Triplet<Integer,String,String>>();
+    private List<File> getfiles(URL url, String args) throws IOException, SAXException, XPathExpressionException {
+        List<File> ret = new ArrayList<File>();
         String xml = getxml_from_url(url, args);
         NodeList nodeList = getxpath_from_xml(xml, "/myemsl-readdir/file");
         for(int i=0; i < nodeList.getLength(); i++) {
@@ -356,13 +336,9 @@ public class Connect {
             NodeList authtlist = getxpath_from_xml(xml, "/myemsl-readdir/auth/token");
             Node authNode = authtlist.item(authidx);
             String authtoken = authNode.getFirstChild().getNodeValue();
-            ret.add(new Triplet(itemid, filename, authtoken));
+            ret.add(new FileMetaData(filename, null, null, new FileAuthInfo(itemid, filename, authtoken)));
         }
         return ret;
-    }
-
-    private NodeList getxpath(URL url, String xpath) throws IOException, SAXException, XPathExpressionException {
-        return getxpath(url, xpath, "");
     }
 
     private NodeList getxpath(URL url, String xpath, String args) throws IOException, SAXException, XPathExpressionException {
@@ -398,10 +374,11 @@ public class Connect {
      * @throws SAXException
      * @throws XPathExpressionException
      */
-    public void getitem(BufferedWriter bwout, Triplet<Integer,String,String> item) throws IOException, SAXException, XPathExpressionException {
-        HttpGet get_item = new HttpGet(config.itemurl()+"/"+item.getValue0()+"/"+item.getValue1()+"?token="+item.getValue2());
+    public void getitem(Writer bwout, File item) throws Exception {
+    	FileAuthInfo i = (FileAuthInfo) item.getAuthInfo();
+        HttpGet get_item = new HttpGet(config.itemurl()+"/"+i.itemID+"/"+i.fileName+"?token="+i.authToken);
         HttpResponse response = client.execute(get_item, localContext);
-        String bread = this.read_http_entity(response.getEntity(), bwout);
+        this.read_http_entity(response.getEntity(), bwout);
     }
 
     /**
@@ -411,9 +388,58 @@ public class Connect {
      * 
      * @throws IOException
      */
-    public void logout() throws IOException {
+    public void logout() throws Exception {
         HttpGet httpget = new HttpGet(config.logouturl());
         HttpResponse response = client.execute(httpget, localContext);
         this.read_http_entity(response.getEntity());
     }
+
+	@Override
+	public UploadHandle uploadAsync(List<File> files) throws Exception {
+		return this.upload(files);
+	}
+
+	@Override
+	public void uploadWait(UploadHandle h) throws Exception {
+		this.status_wait(h);
+		
+	}
+
+	@Override
+	public void getFile(Writer out, File file) throws Exception {
+		this.getitem(out, file);
+	}
+
+	@Override
+	public void login(String username, String password) throws Exception {
+        /* this sets up a pass through trust manager which is rather insecure
+         * we need to figure out why the default keystore isn't working with
+         * the SSL cert we have on our production systems */
+        X509TrustManager tm = new X509TrustManager() {
+            @Override public void checkClientTrusted(X509Certificate[] xcs, String string) throws CertificateException {}
+            @Override public void checkServerTrusted(X509Certificate[] xcs, String string) throws CertificateException {}
+            @Override public X509Certificate[] getAcceptedIssuers() { return null; }
+        };
+        SSLContext null_ctx = SSLContext.getInstance("TLS");
+        null_ctx.init(null, new TrustManager[]{tm}, null);
+        SSLSocketFactory socketFactory = new SSLSocketFactory(null_ctx);
+        socketFactory.setHostnameVerifier((X509HostnameVerifier) org.apache.http.conn.ssl.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+        Scheme sch = new Scheme("https", 443, socketFactory);
+        HttpGet httpget = new HttpGet(config.loginurl());
+        this.client = new DefaultHttpClient();
+        client.getConnectionManager().getSchemeRegistry().register(sch);
+        client.getCredentialsProvider().setCredentials(
+            new AuthScope(config.server(), AuthScope.ANY_PORT),
+            new UsernamePasswordCredentials(username, password)
+        );
+        localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+        HttpResponse response = client.execute(httpget, localContext);
+        Integer resCode = response.getStatusLine().getStatusCode() % 100;
+        switch (resCode) {
+            case 2: break;
+            case 4:
+            case 5: /* throw error */ break;
+        }
+        this.read_http_entity(response.getEntity());
+	}
 };

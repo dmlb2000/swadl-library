@@ -1,5 +1,7 @@
-package gov.pnnl.emsl.PacificaLibrary;
+package gov.pnnl.emsl.SWADL;
 
+import gov.pnnl.emsl.PacificaLibrary.Connect;
+import gov.pnnl.emsl.PacificaLibrary.LibraryConfiguration;
 
 import java.io.BufferedWriter;
 import java.io.Console;
@@ -56,7 +58,7 @@ public class Main {
         String username;
         String server = "my.emsl.pnl.gov";
         String qserver = "my.emsl.pnl.gov";
-        Connect conn;
+        SWADL conn;
 
         File config;
 
@@ -170,7 +172,7 @@ public class Main {
 
         md = new Metadata();
         for(String s:line.getOptionValues("file")) {
-            FileMetaData afmd = new FileMetaData(s, s, "hashforfilea");
+            FileMetaData afmd = new FileMetaData(s, s, "hashforfilea", null);
             for(String g:line.getOptionValues("group")) {
                 afmd.groups.add(new GroupMetaData(g.split("=")[1], g.split("=")[0]));
             }

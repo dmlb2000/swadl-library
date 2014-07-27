@@ -1,6 +1,9 @@
 package gov.pnnl.emsl.PacificaLibrary;
 
 
+import gov.pnnl.emsl.SWADL.FileAuthInfo;
+import gov.pnnl.emsl.SWADL.Group;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +16,8 @@ import java.util.List;
  * 
  * @author David ML Brown Jr. <dmlb2000@gmail.com>
  */
-public class FileMetaData {
+public class FileMetaData implements gov.pnnl.emsl.SWADL.File {
+	
     /**
      * sha1Hash should contain the sha1sum for the file.
      */
@@ -33,7 +37,8 @@ public class FileMetaData {
     /**
      * groups are the metadata groups for the file.
      */
-    public List<GroupMetaData> groups;
+    public List<Group> groups;
+	private FileAuthInfo authinfo;
 
     /**
      * Constructor should store the parameters given into the object.
@@ -47,14 +52,33 @@ public class FileMetaData {
      * @param localpath String of the local path to the file.
      * @param hash String of the hash sum of the file.
      */
-    public FileMetaData(String filename, String localpath, String hash) {
+    public FileMetaData(String filename, String localpath, String hash, FileAuthInfo authinfo) {
+    	this.authinfo = authinfo;
         File f = new File(filename);
         this.sha1Hash = hash;
         this.localFilePath = localpath;
         this.fileName = f.getName();
         this.destinationDirectory = f.getParent();
         if(this.destinationDirectory == null) { this.destinationDirectory = ""; }
-        this.groups = new ArrayList<GroupMetaData>();
+        this.groups = new ArrayList<Group>();
     }
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return this.fileName;
+	}
+
+	@Override
+	public List<Group> getGroups() {
+		// TODO Auto-generated method stub
+		return this.groups;
+	}
+
+	@Override
+	public FileAuthInfo getAuthInfo() {
+		// TODO Auto-generated method stub
+		return this.authinfo;
+	}
 }
 

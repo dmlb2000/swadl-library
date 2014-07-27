@@ -11,10 +11,10 @@ import java.util.List;
  * @author dmlb2000
  */
 public interface SWADL {
-    public UploadHandle uploadAsync(List<File> files);
-    public void uploadWait(UploadHandle h); 
-    public List<File> query(List<Group> groups);
-    public void getFile(Writer out, File file);
-    public void logout();
-    public void login(String username, String password);
+    public UploadHandle uploadAsync(List<File> files) throws Exception;
+    public void uploadWait(UploadHandle h) throws Exception; 
+    public List<File> query(List<Group> groups) throws Exception;
+    public void getFile(Writer out, File file) throws Exception;
+    public void logout() throws Exception;
+    public void login(String username, String password) throws Exception;
 }

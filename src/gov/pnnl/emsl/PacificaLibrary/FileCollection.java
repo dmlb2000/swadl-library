@@ -48,7 +48,8 @@ public class FileCollection {
     public void tarit(OutputStream out) throws IOException, FileNotFoundException, NoSuchAlgorithmException {
         TarOutputStream tarout = new TarOutputStream( new BufferedOutputStream( out ) );
         MessageDigest cript = MessageDigest.getInstance("SHA-1");
-        for(FileMetaData f:md.md.file) {
+        for(gov.pnnl.emsl.SWADL.File sf:md.md.file) {
+        	FileMetaData f = (FileMetaData) sf;
             cript.reset();
             File fd;
             if(!f.destinationDirectory.equals("")) {

@@ -33,9 +33,21 @@ public class GroupMetaData implements Group {
         this.value = value;
     }
 
-    public getKey(void) { return this.key; }
-    public getValue(void) { return this.value; }
-    public setKey(String k) { this.key = k; }
-    public setValue(String v) { this.value = v; }
+    /* (non-Javadoc)
+     * @see gov.pnnl.emsl.SWADL.Group#getKey()
+     */
+    public String getKey() { return this.key; }
+    /* (non-Javadoc)
+     * @see gov.pnnl.emsl.SWADL.Group#getValue()
+     */
+    public String getValue() { return this.value; }
+    /* (non-Javadoc)
+     * @see gov.pnnl.emsl.SWADL.Group#setKey(java.lang.String)
+     */
+    public void setKey(String k) { this.key = k; }
+    /* (non-Javadoc)
+     * @see gov.pnnl.emsl.SWADL.Group#setValue(java.lang.String)
+     */
+    public void setValue(String v) { this.value = v; }
 }
 
