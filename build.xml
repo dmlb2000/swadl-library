@@ -59,7 +59,7 @@
             <zipfileset src="${lib.dir}/commons-lang3-3.3.2.jar" includes="**/*.java **/*.class"/>
             <zipfileset src="${lib.dir}/jargon-core-3.3.2-beta2-jar-with-dependencies.jar" includes="**/*.java **/*.class"/>
             <zipfileset src="${lib.dir}/junit4.jar" includes="**/*.java **/*.class"/>
-            <zipfileset src="${lib.dir}/slf4j-log4j12-1.5.10.jar" includes="**/*.java **/*.class"/>
+            <zipfileset src="${lib.dir}/slf4j-jdk14-1.5.10.jar" includes="**/*.java **/*.class"/>
             <manifest>
                 <attribute name="Main-Class" value="gov.pnnl.emsl.SWADLcli.Main"/>
             </manifest>
