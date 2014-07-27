@@ -14,6 +14,8 @@
         <fileset dir="${jar.dir}" includes="**/*.jar"/>
     </path>
 
+	<target name="main" depends="clean,jar,jar-release"/>
+	
     <target name="clean">
         <delete dir="${build.dir}"/>
     </target>
