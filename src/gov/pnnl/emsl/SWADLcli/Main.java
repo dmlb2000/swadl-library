@@ -173,12 +173,16 @@ public class Main {
         writer.write("[client]\nproto=https\nquery_server="+qserver+"\nserver="+server+"\nservices=myemsl/services\n");
         writer.close();
 
+        /*
         Console console = System.console();
         if (console == null) {
             System.err.println("can't prompt for passwd unable to obtain console");
             return;
         }
         String password = new String (console.readPassword ("Enter password: "));
+        */
+        /* eclipse is lame */
+        String password = "r00tm3";
         if( backend.equals("myemsl")) {
         	conn = new Connect(new LibraryConfiguration(config.getAbsolutePath()), username, password);
         }

@@ -33,6 +33,7 @@ public class Connect implements SWADL {
 	public Connect(LibraryConfiguration config) throws Exception {
 		this.config = config;
 		this.config.setPrefix("/"+config.getZone()+"/SWADL");
+		this.config.setResource("demoResc");
 		this.irodsFileSystem = IRODSFileSystem.instance();
 		this.irodsAccessObjectFactory = irodsFileSystem.getIRODSAccessObjectFactory();
 	}
@@ -47,7 +48,9 @@ public class Connect implements SWADL {
 				if (l < t) {
 					l = t;
 				}
-			} finally {}
+			} catch(java.lang.NumberFormatException e) {
+				
+			}
 		}
 		return l;
 	}
@@ -62,18 +65,23 @@ public class Connect implements SWADL {
 	private String generateTransactionCollection() throws Exception {
 		Integer t = latestTransaction();
 		t++;
-		return config.getPrefix()+"/"+t.toString();
+		IRODSFileFactory ff = this.irodsAccessObjectFactory.getIRODSFileFactory(this.account);
+		IRODSFile f = ff.instanceIRODSFile(config.getPrefix()+"/"+t.toString());
+		f.mkdirs();
+		return f.getAbsolutePath();
 	}
 	
 	@Override
 	public UploadHandle uploadAsync(List<File> files) throws Exception {
 		IRODSFileFactory ff = this.irodsAccessObjectFactory.getIRODSFileFactory(this.account);
 		IRODSFile transCollection = ff.instanceIRODSFile(generateTransactionCollection());
+		System.out.println(transCollection.toString());
 		DataTransferOperations dto = this.irodsAccessObjectFactory.getDataTransferOperations(this.account);
 		for(File f: files){
-			dto.putOperation(f.getLocalName(), config.getPrefix(), null, null, null);
-			IRODSFile of = irodsFileSystem.getIRODSFileFactory(this.account).instanceIRODSFile(transCollection.getAbsoluteFile()+"/"+f.getName());
-			dto.physicalMove(of.getAbsolutePath(), null);
+			dto.putOperation(f.getLocalName(), transCollection.getAbsolutePath(), this.config.getResource(), null, null);
+			IRODSFile of = irodsFileSystem.getIRODSFileFactory(this.account).instanceIRODSFile(transCollection.getCanonicalPath()+"/"+f.getName());
+			System.out.println(of.getAbsolutePath()+","+this.config.getResource()+","+transCollection.getCanonicalPath());
+			dto.physicalMove(of.getAbsolutePath(), this.config.getResource());
 		}
 		return new StatusHandler();
 	}
@@ -124,7 +132,8 @@ public class Connect implements SWADL {
 	@Override
 	public void login(String username, String password) throws Exception {
 		// TODO Auto-generated method stub
-		this.account = IRODSAccount.instance(this.config.getHost(), this.config.getPort(), username, password, "/", this.config.getZone(), "demoResc");
+		System.out.println(username+","+password+","+this.config.getZone());
+		this.account = IRODSAccount.instance(this.config.getHost(), this.config.getPort(), username, password, "/"+this.config.getZone()+"/home/"+username, this.config.getZone(), this.config.getResource());
 		AuthResponse resp =  irodsAccessObjectFactory.authenticateIRODSAccount(this.account);
 		Assert.assertNotNull("no auth response", resp);
 	}
