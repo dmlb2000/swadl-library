@@ -42,24 +42,24 @@
 
     <target name="jar-release" depends="compile-main">
         <jar destfile="${jar.dir}/${ant.project.name}-release.jar" basedir="${classes.dir}">
-            <zipfileset src="${lib.dir}/commons-codec-1.7.jar" includes="**/*.java **/*.class"/>
-            <zipfileset src="${lib.dir}/commons-logging-1.1.1.jar" includes="**/*.java **/*.class"/>
-            <zipfileset src="${lib.dir}/fluent-hc-4.2.3.jar" includes="**/*.java **/*.class"/>
-            <zipfileset src="${lib.dir}/gson-2.2.2.jar" includes="**/*.java **/*.class"/>
-            <zipfileset src="${lib.dir}/httpclient-4.2.3.jar" includes="**/*.java **/*.class"/>
-            <zipfileset src="${lib.dir}/httpclient-cache-4.2.3.jar" includes="**/*.java **/*.class"/>
-            <zipfileset src="${lib.dir}/httpcore-4.2.3.jar" includes="**/*.java **/*.class"/>
-            <zipfileset src="${lib.dir}/httpcore-ab-4.2.3.jar" includes="**/*.java **/*.class"/>
-            <zipfileset src="${lib.dir}/httpcore-nio-4.2.3.jar" includes="**/*.java **/*.class"/>
-            <zipfileset src="${lib.dir}/httpmime-4.2.3.jar" includes="**/*.java **/*.class"/>
-            <zipfileset src="${lib.dir}/ini4j-0.5.2.jar" includes="**/*.java **/*.class"/>
-            <zipfileset src="${lib.dir}/jtar-2.2.jar" includes="**/*.java **/*.class"/>
-            <zipfileset src="${lib.dir}/javatuples-1.2.jar" includes="**/*.java **/*.class"/>
-            <zipfileset src="${lib.dir}/commons-cli-1.2.jar" includes="**/*.java **/*.class"/>
-            <zipfileset src="${lib.dir}/commons-lang3-3.3.2.jar" includes="**/*.java **/*.class"/>
-            <zipfileset src="${lib.dir}/jargon-core-4.0.2-SNAPSHOT-jar-with-dependencies.jar" includes="**/*.java **/*.class"/>
-            <zipfileset src="${lib.dir}/junit4.jar" includes="**/*.java **/*.class"/>
-            <zipfileset src="${lib.dir}/slf4j-jdk14-1.6.6.jar" includes="**/*.java **/*.class"/>
+            <zipfileset src="${lib.dir}/commons-codec-1.7.jar" includes="**/*.java **/*.class **/*.properties"/>
+            <zipfileset src="${lib.dir}/commons-logging-1.1.1.jar" includes="**/*.java **/*.class **/*.properties"/>
+            <zipfileset src="${lib.dir}/fluent-hc-4.2.3.jar" includes="**/*.java **/*.class **/*.properties"/>
+            <zipfileset src="${lib.dir}/gson-2.2.2.jar" includes="**/*.java **/*.class **/*.properties"/>
+            <zipfileset src="${lib.dir}/httpclient-4.2.3.jar" includes="**/*.java **/*.class **/*.properties"/>
+            <zipfileset src="${lib.dir}/httpclient-cache-4.2.3.jar" includes="**/*.java **/*.class **/*.properties"/>
+            <zipfileset src="${lib.dir}/httpcore-4.2.3.jar" includes="**/*.java **/*.class **/*.properties"/>
+            <zipfileset src="${lib.dir}/httpcore-ab-4.2.3.jar" includes="**/*.java **/*.class **/*.properties"/>
+            <zipfileset src="${lib.dir}/httpcore-nio-4.2.3.jar" includes="**/*.java **/*.class **/*.properties"/>
+            <zipfileset src="${lib.dir}/httpmime-4.2.3.jar" includes="**/*.java **/*.class **/*.properties"/>
+            <zipfileset src="${lib.dir}/ini4j-0.5.2.jar" includes="**/*.java **/*.class **/*.properties"/>
+            <zipfileset src="${lib.dir}/jtar-2.2.jar" includes="**/*.java **/*.class **/*.properties"/>
+            <zipfileset src="${lib.dir}/javatuples-1.2.jar" includes="**/*.java **/*.class **/*.properties"/>
+            <zipfileset src="${lib.dir}/commons-cli-1.2.jar" includes="**/*.java **/*.class **/*.properties"/>
+            <zipfileset src="${lib.dir}/commons-lang3-3.3.2.jar" includes="**/*.java **/*.class **/*.properties"/>
+            <zipfileset src="${lib.dir}/jargon-core-4.0.2-SNAPSHOT-jar-with-dependencies.jar" includes="**/*.java **/*.class **/*.properties"/>
+            <zipfileset src="${lib.dir}/junit4.jar" includes="**/*.java **/*.class **/*.properties"/>
+            <zipfileset src="${lib.dir}/slf4j-jdk14-1.6.6.jar" includes="**/*.java **/*.class **/*.properties"/>
             <manifest>
                 <attribute name="Main-Class" value="gov.pnnl.emsl.SWADLcli.Main"/>
             </manifest>
