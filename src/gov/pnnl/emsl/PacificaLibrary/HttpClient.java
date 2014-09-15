@@ -13,6 +13,7 @@ import java.security.KeyStore;
 
 import javax.net.ssl.SSLContext;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -20,6 +21,8 @@ import org.apache.http.client.CookieStore;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
@@ -99,6 +102,16 @@ public class HttpClient {
 			InetSocketAddress socksaddr = new InetSocketAddress(InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }), 8000);
 			context.setAttribute("socks.address", socksaddr);
 		}
+	}
+	public CloseableHttpResponse put(HttpEntity entity, URI location) throws Exception {
+		HttpPut httpput = new HttpPut(location);
+		httpput.setEntity(entity);
+		return httpclient.execute(httpput, context);
+	}
+	public CloseableHttpResponse post(HttpEntity entity, URI location) throws Exception {
+		HttpPost httppost = new HttpPost(location);
+		httppost.setEntity(entity);
+		return httpclient.execute(httppost, context);
 	}
 	
 	public CloseableHttpResponse get(URI location) throws Exception { 

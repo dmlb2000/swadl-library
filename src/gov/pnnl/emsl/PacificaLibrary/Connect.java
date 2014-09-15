@@ -12,21 +12,16 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -39,24 +34,10 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.protocol.ClientContext;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
-import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -78,10 +59,8 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
     String username;
     String password;
 
-    DefaultHttpClient client;
-    HttpContext localContext;
-    CookieStore cookieStore;
-
+    HttpClient client;
+    
     DocumentBuilder db;
     XPath xPath;
 
@@ -138,32 +117,9 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         this.db = dbf.newDocumentBuilder();
         this.xPath = XPathFactory.newInstance().newXPath();
-        /* make a place to store the cookies */
-        this.cookieStore = new BasicCookieStore();
-        this.localContext = new BasicHttpContext();
         /* create the target host */
         this.config = config;
-        this.login(username, password);
-    }
-
-    /**
-     * Returns the session string, this should be a long string of characters
-     * and is used for debugging whether the login worked.
-     * @return String MyEMSL session key.
-     */
-    public String get_myemsl_session() {
-        int i;
-        for(i = 0; i < cookieStore.getCookies().size(); i++) {
-            System.out.format("%s=%s\n",
-                cookieStore.getCookies().get(i).getName().trim(),
-                cookieStore.getCookies().get(i).getValue().trim());
-            if(!cookieStore.getCookies().get(i).getName().trim().equals("myemsl_session")) {
-                return null;
-            } else {
-                return cookieStore.getCookies().get(i).getValue();
-            }
-        }
-        return null;
+        this.client = new HttpClient(username, password, true);
     }
 
     /**
@@ -190,15 +146,12 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
         fcol.tarit(ostream);
         long length = ostream.getLength();
 
-        HttpGet get_prealloc = new HttpGet(config.preallocurl());
-        HttpResponse response = client.execute(get_prealloc, localContext);
+        HttpResponse response = client.get(new URI(config.preallocurl()));
         String prealloc_file = this.read_http_entity(response.getEntity());
         String ingestServer = prealloc_file.split("\n")[0];
         String location = prealloc_file.split("\n")[1];
         ingestServer = ingestServer.split(": ")[1];
         location = location.split(": ")[1];
-        
-        HttpPut put_file = new HttpPut("https://"+ingestServer+location);
         
         PipedInputStream in = new PipedInputStream();
         final PipedOutputStream out = new PipedOutputStream(in);
@@ -217,12 +170,10 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
         ).start();
         
         InputStreamEntity entity = new InputStreamEntity(in, length);
-        put_file.setEntity(entity);
-        response = client.execute(put_file, localContext);
+        response = client.put(entity, new URI("https://"+ingestServer+location));
         this.read_http_entity(response.getEntity());
 
-        HttpGet get_finish = new HttpGet("https://"+ingestServer+config.finishurl()+location);
-        response = client.execute(get_finish, localContext);
+        response = client.get(new URI("https://"+ingestServer+config.finishurl()+location));
         String status_url = this.read_http_entity(response.getEntity());
         for(String line:status_url.split("\n")) {
             System.out.println(line);
@@ -261,8 +212,7 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
         Integer time_check = 0;
         while(time_check < sturl.timeout && !status.equals("SUCCESS"))
         {
-            HttpGet get_status = new HttpGet(sturl.status_url);
-            HttpResponse response = client.execute(get_status, localContext);
+            HttpResponse response = client.get(new URI(sturl.status_url));
             String statusxml = this.read_http_entity(response.getEntity());
             Document doc = this.db.parse(new ByteArrayInputStream(statusxml.getBytes("UTF-8")));
             XPathExpression status_xpath = this.xPath.compile("//step[@id='"+sturl.step.toString()+"']/@status");
@@ -307,13 +257,13 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
         return files;
     }
 
-    private void getrec(List<File> files, URL url, String args) throws IOException, SAXException, XPathExpressionException {
+    private void getrec(List<File> files, URL url, String args) throws Exception {
         for(URL d: this.getdirs(url, args))
             this.getrec(files, d, args);
         files.addAll(this.getfiles(url, args));
     }
 
-    private ArrayList<URL> getdirs(URL url, String args) throws IOException, SAXException, XPathExpressionException {
+    private ArrayList<URL> getdirs(URL url, String args) throws Exception {
         ArrayList<URL> ret = new ArrayList<URL>();
         NodeList nodeList = getxpath(url, "/myemsl-readdir/dir/@name", args);
         for(int i=0; i<nodeList.getLength(); i++)
@@ -324,7 +274,7 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
         return ret;
     }
 
-    private List<File> getfiles(URL url, String args) throws IOException, SAXException, XPathExpressionException {
+    private List<File> getfiles(URL url, String args) throws Exception {
         List<File> ret = new ArrayList<File>();
         String xml = getxml_from_url(url, args);
         NodeList nodeList = getxpath_from_xml(xml, "/myemsl-readdir/file");
@@ -344,16 +294,14 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
         return ret;
     }
 
-    private NodeList getxpath(URL url, String xpath, String args) throws IOException, SAXException, XPathExpressionException {
+    private NodeList getxpath(URL url, String xpath, String args) throws Exception {
         return this.getxpath_from_xml(this.getxml_from_url(url, args), xpath);
     }
 
-    private String getxml_from_url(URL url, String args) throws IOException {
+    private String getxml_from_url(URL url, String args) throws Exception {
         List <NameValuePair> nvps = new ArrayList <NameValuePair>();
         nvps.add(new BasicNameValuePair(args, ""));
-        HttpPost post_query = new HttpPost(url.toString());
-        post_query.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
-        HttpResponse response = client.execute(post_query, localContext);
+        HttpResponse response = client.post(new UrlEncodedFormEntity(nvps, HTTP.UTF_8), url.toURI());
         return this.read_http_entity(response.getEntity());
     }
 
@@ -379,8 +327,7 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
      */
     public void getitem(Writer bwout, File item) throws Exception {
     	FileAuthInfo i = (FileAuthInfo) item.getAuthInfo();
-        HttpGet get_item = new HttpGet(config.itemurl()+"/"+i.itemID+"/"+i.fileName+"?token="+i.authToken);
-        HttpResponse response = client.execute(get_item, localContext);
+        HttpResponse response = client.get(new URI(config.itemurl()+"/"+i.itemID+"/"+i.fileName+"?token="+i.authToken));
         this.read_http_entity(response.getEntity(), bwout);
     }
 
@@ -392,8 +339,7 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
      * @throws IOException
      */
     public void logout() throws Exception {
-        HttpGet httpget = new HttpGet(config.logouturl());
-        HttpResponse response = client.execute(httpget, localContext);
+        HttpResponse response = client.get(new URI(config.logouturl()));
         this.read_http_entity(response.getEntity());
     }
 
@@ -415,28 +361,7 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
 
 	@Override
 	public void login(String username, String password) throws Exception {
-        /* this sets up a pass through trust manager which is rather insecure
-         * we need to figure out why the default keystore isn't working with
-         * the SSL cert we have on our production systems */
-        X509TrustManager tm = new X509TrustManager() {
-            @Override public void checkClientTrusted(X509Certificate[] xcs, String string) throws CertificateException {}
-            @Override public void checkServerTrusted(X509Certificate[] xcs, String string) throws CertificateException {}
-            @Override public X509Certificate[] getAcceptedIssuers() { return null; }
-        };
-        SSLContext null_ctx = SSLContext.getInstance("TLS");
-        null_ctx.init(null, new TrustManager[]{tm}, null);
-        SSLSocketFactory socketFactory = new SSLSocketFactory(null_ctx);
-        socketFactory.setHostnameVerifier((X509HostnameVerifier) org.apache.http.conn.ssl.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-        Scheme sch = new Scheme("https", 443, socketFactory);
-        HttpGet httpget = new HttpGet(config.loginurl());
-        this.client = new DefaultHttpClient();
-        client.getConnectionManager().getSchemeRegistry().register(sch);
-        client.getCredentialsProvider().setCredentials(
-            new AuthScope(config.server(), AuthScope.ANY_PORT),
-            new UsernamePasswordCredentials(username, password)
-        );
-        localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
-        HttpResponse response = client.execute(httpget, localContext);
+        HttpResponse response = client.get(new URI(config.loginurl()));
         Integer resCode = response.getStatusLine().getStatusCode() % 100;
         switch (resCode) {
             case 2: break;
