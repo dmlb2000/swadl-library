@@ -48,10 +48,8 @@
             <zipfileset src="${lib.dir}/gson-2.2.2.jar" includes="**/*.java **/*.class **/*.properties"/>
             <zipfileset src="${lib.dir}/httpclient-4.3.5.jar" includes="**/*.java **/*.class **/*.properties"/>
             <zipfileset src="${lib.dir}/httpclient-cache-4.3.5.jar" includes="**/*.java **/*.class **/*.properties"/>
-            <zipfileset src="${lib.dir}/httpcore-4.3.5.jar" includes="**/*.java **/*.class **/*.properties"/>
-            <zipfileset src="${lib.dir}/httpcore-ab-4.2.3.jar" includes="**/*.java **/*.class **/*.properties"/>
-            <zipfileset src="${lib.dir}/httpcore-nio-4.2.3.jar" includes="**/*.java **/*.class **/*.properties"/>
-            <zipfileset src="${lib.dir}/httpmime-4.2.3.jar" includes="**/*.java **/*.class **/*.properties"/>
+            <zipfileset src="${lib.dir}/httpcore-4.3.2.jar" includes="**/*.java **/*.class **/*.properties"/>
+            <zipfileset src="${lib.dir}/httpmime-4.3.5.jar" includes="**/*.java **/*.class **/*.properties"/>
             <zipfileset src="${lib.dir}/ini4j-0.5.2.jar" includes="**/*.java **/*.class **/*.properties"/>
             <zipfileset src="${lib.dir}/jtar-2.2.jar" includes="**/*.java **/*.class **/*.properties"/>
             <zipfileset src="${lib.dir}/javatuples-1.2.jar" includes="**/*.java **/*.class **/*.properties"/>

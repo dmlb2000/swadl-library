@@ -49,7 +49,7 @@ public class HttpClient {
 	HttpClientContext context;
 	CredentialsProvider credsProvider;
 	boolean useProxy;
-	public PacificaHttpClient(String username, String password, boolean useProxy) throws Exception {
+	public HttpClient(String username, String password, boolean useProxy) throws Exception {
 		cookieStore = new BasicCookieStore();
 		reg = RegistryBuilder.<ConnectionSocketFactory>create()
                 .register("http", new MyConnectionSocketFactory())
