@@ -99,7 +99,7 @@ public class HttpClient {
 	
 	public void setupProxy() throws Exception {
 		if(useProxy){
-			InetSocketAddress socksaddr = new InetSocketAddress(InetAddress.getByAddress(new byte[] { (byte)0xc0, (byte)0xa8, (byte)0x7a, (byte)0x1 }), 8000);
+			InetSocketAddress socksaddr = new InetSocketAddress(InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }), 8000);
 			context.setAttribute("socks.address", socksaddr);
 		}
 	}
