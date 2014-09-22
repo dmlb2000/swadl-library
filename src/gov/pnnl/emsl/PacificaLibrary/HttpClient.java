@@ -95,6 +95,8 @@ public class HttpClient {
 		credsProvider = new BasicCredentialsProvider();
 		credsProvider.setCredentials(new AuthScope("my.emsl.pnl.gov", 443), new UsernamePasswordCredentials(username, password));
 		context.setCredentialsProvider(credsProvider);
+		setupProxy();
+		setupCookie();
 	}
 	
 	public void setupProxy() throws Exception {
@@ -115,8 +117,6 @@ public class HttpClient {
 	}
 	
 	public CloseableHttpResponse get(URI location) throws Exception { 
-		setupProxy();
-		setupCookie();
 		HttpGet httpget = new HttpGet(location);
 		return httpclient.execute(httpget, context);
 	}
