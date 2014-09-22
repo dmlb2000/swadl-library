@@ -244,6 +244,8 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
      * @throws SAXException
      * @throws XPathExpressionException
      */
+    public List<File> query_new(List<Group> groups) throws Exception {
+    }
     public List<File> query(List<Group> groups) throws Exception {
         String url = config.queryurl();
         for(Group g: groups) {
