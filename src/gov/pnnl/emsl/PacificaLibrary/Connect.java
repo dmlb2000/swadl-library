@@ -119,7 +119,7 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
         this.xPath = XPathFactory.newInstance().newXPath();
         /* create the target host */
         this.config = config;
-        this.client = new HttpClient(username, password, true);
+        this.client = new HttpClient(username, password, false);
     }
 
     /**
