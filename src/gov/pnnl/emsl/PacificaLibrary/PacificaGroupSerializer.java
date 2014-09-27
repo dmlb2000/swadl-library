@@ -15,10 +15,8 @@ public class PacificaGroupSerializer implements JsonSerializer<Group> {
 	public JsonElement serialize(Group arg0, Type arg1,
 			JsonSerializationContext arg2) {
 		// TODO Auto-generated method stub
-		PacificaGroupConvert g = new PacificaGroupConvert();
-		g.name = arg0.getValue();
-		g.type = arg0.getKey();
-		return new JsonPrimitive(g.toString());
+		String groupstr = "{\"name\":\""+arg0.getValue()+"\", \"type\":\""+arg0.getKey()+"\"}";
+		return new JsonPrimitive(groupstr);
 	}
 
 }
