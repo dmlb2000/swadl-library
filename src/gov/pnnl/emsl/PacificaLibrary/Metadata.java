@@ -1,6 +1,7 @@
 package gov.pnnl.emsl.PacificaLibrary;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * This metadata class is responsible for creating the text of the metadata file
@@ -11,6 +12,8 @@ import com.google.gson.Gson;
 public class Metadata {
 
     Gson gson;
+    GsonBuilder gsonBuilder;
+    
     /**
      * This is the metadata that gets turned into JSON.
      */
@@ -19,7 +22,12 @@ public class Metadata {
     /**
      * Constructor creates the Gson object internally and sets a new md object too.
      */
-    public Metadata() { this.gson = new Gson(); this.md = new MetadataContainer(); }
+    public Metadata() { 
+    	this.gson = new Gson();
+    	this.md = new MetadataContainer();
+    	this.gsonBuilder = new GsonBuilder();
+    	this.gsonBuilder.registerTypeAdapter(gov.pnnl.emsl.SWADL.Group.class, new PacificaGroupSerializer());
+    }
 
     /**
      * Creates the content of the JSON metadata file.
