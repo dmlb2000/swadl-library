@@ -93,7 +93,7 @@ public class HttpClient {
 		BasicScheme basicAuth = new BasicScheme();
 		context.setAttribute("preemptive-auth", basicAuth);
 		credsProvider = new BasicCredentialsProvider();
-		credsProvider.setCredentials(new AuthScope("my.emsl.pnl.gov", 443), new UsernamePasswordCredentials(username, password));
+		credsProvider.setCredentials(new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT, AuthScope.ANY_REALM, "basic"), new UsernamePasswordCredentials(username, password));
 		context.setCredentialsProvider(credsProvider);
 		setupProxy();
 		setupCookie();
