@@ -23,7 +23,6 @@ public class Metadata {
      * Constructor creates the Gson object internally and sets a new md object too.
      */
     public Metadata() { 
-    	this.gson = new Gson();
     	this.md = new MetadataContainer();
     	this.gsonBuilder = new GsonBuilder();
     	this.gsonBuilder.registerTypeAdapter(gov.pnnl.emsl.SWADL.Group.class, new PacificaGroupSerializer());
@@ -33,5 +32,8 @@ public class Metadata {
      * Creates the content of the JSON metadata file.
      * @return String of JSON of the metadata objects.
      */
-    public String tojson() { return this.gson.toJson(this.md); }
+    public String tojson() { 
+    	this.gson = this.gsonBuilder.create();
+    	return this.gson.toJson(this.md);
+    }
 }
