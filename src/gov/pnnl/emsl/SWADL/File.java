@@ -11,8 +11,8 @@ import gov.pnnl.emsl.SWADL.Group;
  *
  */
 public class File {
-	protected String filename;
-	protected String localFilename;
+	protected String fileName;
+	protected String localFilePath;
 	protected List<Group> groups;
 	protected FileAuthInfo finfo;
 	/**
@@ -21,16 +21,16 @@ public class File {
 	 * @return file name
 	 */
 	public String getName() throws Exception {
-		return this.filename;
+		return this.fileName;
 	}
 	public void setName(String filename) throws Exception {
-		this.filename = filename;
+		this.fileName = filename;
 	}
 	public String getLocalName() throws Exception {
-		return this.localFilename;
+		return this.localFilePath;
 	}
 	public void setLocalName(String filename) throws Exception {
-		this.localFilename = filename;
+		this.localFilePath = filename;
 	}
     /**
      * Get the metadata groups from the file.
