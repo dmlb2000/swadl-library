@@ -39,8 +39,8 @@ public class FileMetaData extends gov.pnnl.emsl.SWADL.File {
     	this.finfo = authinfo;
         File f = new File(filename);
         this.sha1Hash = hash;
-        this.localFilename = localpath;
-        this.filename = f.getName();
+        this.localFilePath = localpath;
+        this.fileName = f.getName();
         this.destinationDirectory = f.getParent();
         if(this.destinationDirectory == null) { this.destinationDirectory = ""; }
         this.groups = new ArrayList<Group>();
