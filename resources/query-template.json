@@ -1,0 +1,141 @@
+{
+    "facets": {
+        "ext": {
+            "terms": {
+                "field": "ext"
+            }
+        },
+        "extended_metadata.gov_pnnl_emsl_dms_analysisjob.name.untouched": {
+            "terms": {
+                "field": "extended_metadata.gov_pnnl_emsl_dms_analysisjob.name.untouched"
+            }
+        },
+        "extended_metadata.gov_pnnl_emsl_dms_analysisjob.tool.name.untouched": {
+            "terms": {
+                "field": "extended_metadata.gov_pnnl_emsl_dms_analysisjob.tool.name.untouched"
+            }
+        },
+        "extended_metadata.gov_pnnl_emsl_dms_campaign.name.untouched": {
+            "terms": {
+                "field": "extended_metadata.gov_pnnl_emsl_dms_campaign.name.untouched"
+            }
+        },
+        "extended_metadata.gov_pnnl_emsl_dms_datapackage.name.untouched": {
+            "terms": {
+                "field": "extended_metadata.gov_pnnl_emsl_dms_datapackage.name.untouched"
+            }
+        },
+        "extended_metadata.gov_pnnl_emsl_dms_dataset.name.untouched": {
+            "terms": {
+                "field": "extended_metadata.gov_pnnl_emsl_dms_dataset.name.untouched"
+            }
+        },
+        "extended_metadata.gov_pnnl_emsl_dms_experiment.name.untouched": {
+            "terms": {
+                "field": "extended_metadata.gov_pnnl_emsl_dms_experiment.name.untouched"
+            }
+        },
+        "extended_metadata.gov_pnnl_emsl_instrument.name.untouched": {
+            "terms": {
+                "field": "extended_metadata.gov_pnnl_emsl_instrument.name.untouched"
+            }
+        },
+        "extended_metadata.gov_pnnl_erica/irn.id.untouched": {
+            "terms": {
+                "field": "extended_metadata.gov_pnnl_erica/irn.id.untouched"
+            }
+        },
+        "groups.JGI.ID": {
+            "terms": {
+                "field": "groups.JGI.ID"
+            }
+        },
+        "groups.JGI.ftype": {
+            "terms": {
+                "field": "groups.JGI.ftype"
+            }
+        },
+        "groups.NMR.ExperimentData": {
+            "terms": {
+                "field": "groups.NMR.ExperimentData"
+            }
+        },
+        "groups.NWChem.CML": {
+            "terms": {
+                "field": "groups.NWChem.CML"
+            }
+        },
+        "groups.Tag": {
+            "terms": {
+                "field": "groups.Tag"
+            }
+        },
+        "groups.gov_pnnl_emsl_pacifica_generic_publication": {
+            "terms": {
+                "field": "groups.gov_pnnl_emsl_pacifica_generic_publication.untouched"
+            }
+        },
+        "proposals": {
+            "terms": {
+                "field": "proposals"
+            }
+        },
+        "size": {
+            "range": {
+                "size": [
+                    {
+                        "to": 999
+                    },
+                    {
+                        "from": 1000,
+                        "to": 999999
+                    },
+                    {
+                        "from": 1000000,
+                        "to": 999999999
+                    },
+                    {
+                        "from": 1000000000
+                    }
+                ]
+            }
+        },
+        "submittername": {
+            "terms": {
+                "field": "submittername.untouched"
+            }
+        }
+    },
+    "from": 0,
+    "highlight": {
+        "fields": {
+            "email_addresses": {},
+            "first_names": {},
+            "instrument_names": {},
+            "last_names": {},
+            "network_ids": {},
+            "title": {
+                "fragment_size": 10000
+            }
+        },
+        "fragment_size": 20,
+        "number_of_fragments": 3
+    },
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "query_string": {
+                        "default_field": "_all",
+                        "default_operator": "AND",
+                        "query": "@@QUERY@@"
+                    }
+                }
+            ],
+            "must_not": [],
+            "should": []
+        }
+    },
+    "size": "25",
+    "sort": []
+}

@@ -1,8 +1,12 @@
 package gov.pnnl.emsl.PacificaLibrary;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -61,8 +65,10 @@ public class HttpClient {
 		cm = new PoolingHttpClientConnectionManager(reg, new FakeDnsResolver());
 		trustStore  = KeyStore.getInstance(KeyStore.getDefaultType());
 		try {
-			instream = new FileInputStream(new File("my.keystore"));
-			trustStore.load(instream, "changeit".toCharArray());			
+			File file;
+			file = new File(getClass().getResource("/my.keystore").toURI());
+			InputStream reader = new BufferedInputStream(new FileInputStream(file));
+			trustStore.load(reader, "changeit".toCharArray());			
 		}
 		catch(Exception ex) {
 			ex.printStackTrace();
@@ -110,9 +116,12 @@ public class HttpClient {
 		httpput.setEntity(entity);
 		return httpclient.execute(httpput, context);
 	}
-	public CloseableHttpResponse post(HttpEntity entity, URI location) throws Exception {
+	public CloseableHttpResponse post(HttpEntity entity, URI location, String acceptType) throws Exception {
 		HttpPost httppost = new HttpPost(location);
 		httppost.setEntity(entity);
+		if(acceptType != null) {
+			httppost.addHeader("Accept", acceptType);
+		}
 		return httpclient.execute(httppost, context);
 	}
 	

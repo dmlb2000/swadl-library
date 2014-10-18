@@ -1,11 +1,15 @@
 package gov.pnnl.emsl.PacificaLibrary;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import gov.pnnl.emsl.SWADL.File;
 import gov.pnnl.emsl.SWADL.Group;
 import gov.pnnl.emsl.SWADL.UploadHandle;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PipedInputStream;
@@ -31,11 +35,13 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
@@ -45,6 +51,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.google.gson.Gson;
 
 /**
  * Main connect object that integrates all other classes to communicate with the
@@ -245,6 +252,24 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
      * @throws XPathExpressionException
      */
     public List<File> query_new(List<Group> groups) throws Exception {
+    	java.io.File file;
+    	file = new java.io.File(getClass().getResource("/query-template.json").toURI());
+    	BufferedReader reader = new BufferedReader(new FileReader(file));
+    	String json = new String();
+    	char[] cbuf = new char[1024];
+    	int count = reader.read(cbuf);
+    	while(count > 0) { 
+    		json += new String(cbuf);
+    		count = reader.read(cbuf);
+    	}
+    	reader.close();
+    	ArrayList<String> queries = new ArrayList<String>();
+    	for(Group g: groups) {
+    		queries.add(g.getKey()+": \""+g.getValue()+"\"");
+    	}
+    	String query = StringUtils.join(queries.iterator(), " AND ");
+    	json.replace("@@QUERY@@", query);
+    	client.post(new StringEntity(json), new URI(config.queryurl()), "application/json");
         return null;
     }
     public List<File> query(List<Group> groups) throws Exception {
@@ -304,7 +329,7 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
     private String getxml_from_url(URL url, String args) throws Exception {
         List <NameValuePair> nvps = new ArrayList <NameValuePair>();
         nvps.add(new BasicNameValuePair(args, ""));
-        HttpResponse response = client.post(new UrlEncodedFormEntity(nvps, HTTP.UTF_8), url.toURI());
+        HttpResponse response = client.post(new UrlEncodedFormEntity(nvps, HTTP.UTF_8), url.toURI(), null);
         return this.read_http_entity(response.getEntity());
     }
 
