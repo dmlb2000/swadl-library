@@ -61,7 +61,19 @@
             </manifest>
         </jar>
     </target>
-
+	<target name="-post-jar">
+	    <echo>Adding files to jar...</echo>
+	    <jar destfile="${jar.dir}/${ant.project.name}-release.jar" update="true">
+	        <fileset dir="${basedir}">
+	            <include name="resources/*"/>
+	        </fileset>
+	    </jar>
+	    <jar destfile="${jar.dir}/${ant.project.name}.jar" update="true">
+	        <fileset dir="${basedir}">
+	            <include name="resources/*"/>
+	        </fileset>
+	    </jar>
+	</target>
     <target name="junit" depends="jar">
         <mkdir dir="${report.dir}"/>
         <junit printsummary="yes">
