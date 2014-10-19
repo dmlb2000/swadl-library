@@ -34,6 +34,9 @@
     <target name="jar-main" depends="compile-main">
         <mkdir dir="${jar.dir}"/>
         <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}" id="library">
+	        <fileset dir="${basedir}">
+	            <include name="resources/*"/>
+	        </fileset>
             <manifest>
                 <attribute name="Main-Class" value="gov.pnnl.emsl.SWADLcli.Main"/>
             </manifest>
@@ -56,24 +59,15 @@
             <zipfileset src="${lib.dir}/jargon-core-4.0.2-SNAPSHOT-jar-with-dependencies.jar" includes="**/*.java **/*.class **/*.properties"/>
             <zipfileset src="${lib.dir}/junit4.jar" includes="**/*.java **/*.class **/*.properties"/>
             <zipfileset src="${lib.dir}/slf4j-jdk14-1.6.6.jar" includes="**/*.java **/*.class **/*.properties"/>
+	    <fileset dir="${basedir}">
+	        <include name="resources/*"/>
+	    </fileset>
             <manifest>
                 <attribute name="Main-Class" value="gov.pnnl.emsl.SWADLcli.Main"/>
             </manifest>
         </jar>
     </target>
-	<target name="-post-jar">
-	    <echo>Adding files to jar...</echo>
-	    <jar destfile="${jar.dir}/${ant.project.name}-release.jar" update="true">
-	        <fileset dir="${basedir}">
-	            <include name="resources/*"/>
-	        </fileset>
-	    </jar>
-	    <jar destfile="${jar.dir}/${ant.project.name}.jar" update="true">
-	        <fileset dir="${basedir}">
-	            <include name="resources/*"/>
-	        </fileset>
-	    </jar>
-	</target>
+
     <target name="junit" depends="jar">
         <mkdir dir="${report.dir}"/>
         <junit printsummary="yes">

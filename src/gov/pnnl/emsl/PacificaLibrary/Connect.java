@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
@@ -22,7 +23,13 @@ import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,6 +47,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicNameValuePair;
@@ -52,6 +60,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 
 /**
  * Main connect object that integrates all other classes to communicate with the
@@ -251,16 +260,15 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
      * @throws SAXException
      * @throws XPathExpressionException
      */
-    public List<File> query_new(List<Group> groups) throws Exception {
-    	java.io.File file;
-    	file = new java.io.File(getClass().getResource("/query-template.json").toURI());
-    	BufferedReader reader = new BufferedReader(new FileReader(file));
+    public List<File> query(List<Group> groups) throws Exception {
+    	List<File> ret = new ArrayList<File>();
+    	InputStream reader = getClass().getResourceAsStream("/resources/query-template.json");
     	String json = new String();
-    	char[] cbuf = new char[1024];
-    	int count = reader.read(cbuf);
+    	byte[] bbuf = new byte[1024];
+    	int count = reader.read(bbuf);
     	while(count > 0) { 
-    		json += new String(cbuf);
-    		count = reader.read(cbuf);
+    		json += new String(bbuf);
+    		count = reader.read(bbuf);
     	}
     	reader.close();
     	ArrayList<String> queries = new ArrayList<String>();
@@ -269,10 +277,36 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
     	}
     	String query = StringUtils.join(queries.iterator(), " AND ");
     	json.replace("@@QUERY@@", query);
-    	client.post(new StringEntity(json), new URI(config.queryurl()), "application/json");
-        return null;
+    	HttpResponse resp = client.post(new StringEntity(json), new URI(config.queryurl()), "application/json");
+    	String outputJson = this.read_http_entity(resp.getEntity());
+    	Gson gson = new Gson();
+    	System.out.println(outputJson);
+    	Map<String,Object> foo = gson.fromJson(outputJson, new LinkedTreeMap<String,String>().getClass());
+    	Map<String,Object> hits = (LinkedTreeMap<String,Object>)foo.get("hits");
+    	List<Map<String,Object>> mhits = (List<Map<String,Object>>)hits.get("hits");
+    	String authtoken = (String)foo.get("myemsl_auth_token");
+    	class ItemIDComparator implements Comparator<Map<String,Object>> {
+    	    @Override
+    	    public int compare(Map<String,Object> a, Map<String,Object> b) {
+    	    	Integer x,y;
+    	    	String idA = (String)a.get("_id");
+    	    	String idB = (String)b.get("_id");
+    	    	x = Integer.parseInt(idA);
+    	    	y = Integer.parseInt(idB);
+    	        return x.compareTo(y);
+    	    }
+    	}
+    	Collections.sort(mhits, new ItemIDComparator());
+    	for(Map<String,Object> item: mhits)
+    	{
+    		Map<String,Object> source = (LinkedTreeMap<String,Object>)item.get("_source");
+    		String filename = (String)source.get("filename");
+    		Integer itemid = Integer.parseInt((String)item.get("_id"));
+        	ret.add(new FileMetaData(filename, null, null, new FileAuthInfo(itemid, filename, authtoken)));
+    	}
+    	return ret;
     }
-    public List<File> query(List<Group> groups) throws Exception {
+    public List<File> query_old(List<Group> groups) throws Exception {
         String url = config.queryurl();
         for(Group g: groups) {
             url += "/group/"+g.getKey()+"/"+g.getValue();

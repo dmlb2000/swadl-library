@@ -183,6 +183,7 @@ public class Main {
         /*String password = "r00tm3";*/
         if( backend.equals("myemsl")) {
         	conn = new Connect(new LibraryConfiguration(config.getAbsolutePath()), username, password);
+        	conn.login(username, password);
         }
         else if (backend.equals("irods")){
         	gov.pnnl.emsl.iRODS.LibraryConfiguration c = new gov.pnnl.emsl.iRODS.LibraryConfiguration();

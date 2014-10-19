@@ -12,6 +12,7 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Socket;
 import java.net.URI;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.security.KeyStore;
 
@@ -64,17 +65,17 @@ public class HttpClient {
                 .build();
 		cm = new PoolingHttpClientConnectionManager(reg, new FakeDnsResolver());
 		trustStore  = KeyStore.getInstance(KeyStore.getDefaultType());
+		InputStream instream = null;
 		try {
-			File file;
-			file = new File(getClass().getResource("/my.keystore").toURI());
-			InputStream reader = new BufferedInputStream(new FileInputStream(file));
-			trustStore.load(reader, "changeit".toCharArray());			
+			instream = getClass().getResourceAsStream("/resources/my.keystore");
+			trustStore.load(instream, "changeit".toCharArray());
 		}
 		catch(Exception ex) {
 			ex.printStackTrace();
         } finally {
             instream.close();
         }
+		System.out.println("Loaded SSL Keystore");
 		sslcontext = SSLContexts.custom()
                 .loadTrustMaterial(trustStore, new TrustSelfSignedStrategy())
                 .build();
