@@ -178,7 +178,11 @@ public class Main {
             System.err.println("can't prompt for passwd unable to obtain console");
             return;
         }
-        String password = new String (console.readPassword ("Enter password: "));
+	String password = System.getenv("SWADL_PASSWORD");
+	if(password == null)
+	{
+        	password = new String (console.readPassword ("Enter password: "));
+	}
         /* eclipse is lame */
         /*String password = "r00tm3";*/
         if( backend.equals("myemsl")) {
@@ -220,7 +224,7 @@ public class Main {
             files.add(afmd);
         }
 
-        Integer timeout = 60;
+        Integer timeout = 15;
         if ( line.hasOption("timeout") ) {
             timeout = new Integer(line.getOptionValue("timeout"));
         }
