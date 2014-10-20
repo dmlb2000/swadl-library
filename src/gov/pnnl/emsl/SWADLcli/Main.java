@@ -220,7 +220,7 @@ public class Main {
             files.add(afmd);
         }
 
-        Integer timeout = 15;
+        Integer timeout = 60;
         if ( line.hasOption("timeout") ) {
             timeout = new Integer(line.getOptionValue("timeout"));
         }
