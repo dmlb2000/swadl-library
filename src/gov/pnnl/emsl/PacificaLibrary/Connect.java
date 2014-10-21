@@ -267,7 +267,6 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
     	HttpResponse resp = client.post(new StringEntity(json), new URI(config.queryurl()), "application/json");
     	String outputJson = this.read_http_entity(resp.getEntity());
     	JsonParser jsonParser = new JsonParser();
-    	System.out.println(outputJson);
     	JsonElement firstHits = jsonParser.parse(outputJson);
     	assert firstHits.isJsonObject();
     	JsonElement nextHits = firstHits.getAsJsonObject().get("hits");
@@ -307,11 +306,6 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
         	a.add(g.getKey()+"="+g.getValue());
         }
         recParseJson("", source, b);
-        System.out.println("==============");
-        for(String x: a) { System.out.println(x); }
-        System.out.println("==============");
-        for(String y: b) { System.out.println(y); }
-        System.out.println("==============");
         return b.containsAll(a);
     }
 
