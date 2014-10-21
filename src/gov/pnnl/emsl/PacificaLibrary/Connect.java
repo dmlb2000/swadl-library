@@ -307,6 +307,11 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
         	a.add(g.getKey()+"="+g.getValue());
         }
         recParseJson("", source, b);
+        System.out.println("==============");
+        for(String x: a) { System.out.println(x); }
+        System.out.println("==============");
+        for(String y: b) { System.out.println(y); }
+        System.out.println("==============");
         return b.containsAll(a);
     }
 
