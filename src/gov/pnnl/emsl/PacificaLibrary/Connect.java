@@ -307,7 +307,7 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
         	a.add(g.getKey()+"="+g.getValue());
         }
         recParseJson("", source, b);
-        return b.contains(a);
+        return b.containsAll(a);
     }
 
     private void recParseJson(String prefix, JsonElement source, Set<String> b) {
