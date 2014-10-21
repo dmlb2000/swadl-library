@@ -275,7 +275,7 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
     	for(Group g: groups) {
     		queries.add(g.getKey()+": \""+g.getValue()+"\"");
     	}
-    	String query = StringUtils.join(queries.iterator(), " AND ");
+    	String query = StringUtils.join(queries.iterator(), " ");
     	json.replace("@@QUERY@@", query);
     	HttpResponse resp = client.post(new StringEntity(json), new URI(config.queryurl()), "application/json");
     	String outputJson = this.read_http_entity(resp.getEntity());
@@ -300,12 +300,21 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
     	for(Map<String,Object> item: mhits)
     	{
     		Map<String,Object> source = (LinkedTreeMap<String,Object>)item.get("_source");
-    		String filename = (String)source.get("filename");
-    		Integer itemid = Integer.parseInt((String)item.get("_id"));
-        	ret.add(new FileMetaData(filename, null, null, new FileAuthInfo(itemid, filename, authtoken)));
+		if(isSubSet(source, groups)) {
+    			String filename = (String)source.get("filename");
+    			Integer itemid = Integer.parseInt((String)item.get("_id"));
+        		ret.add(new FileMetaData(filename, null, null, new FileAuthInfo(itemid, filename, authtoken)));
+		}
     	}
     	return ret;
     }
+
+    private boolean isSubSet(Map<String,Object> source, List<Groups> groups) throws Exception {
+        Set<String> a = new TreeSet<String>();
+        Set<String> b = new TreeSet<String>();
+        return false;
+    }
+
     public List<File> query_old(List<Group> groups) throws Exception {
         String url = config.queryurl();
         for(Group g: groups) {
