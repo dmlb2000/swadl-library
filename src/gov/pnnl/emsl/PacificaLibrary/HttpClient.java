@@ -1,10 +1,6 @@
 package gov.pnnl.emsl.PacificaLibrary;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -12,7 +8,6 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Socket;
 import java.net.URI;
-import java.net.URL;
 import java.net.UnknownHostException;
 import java.security.KeyStore;
 
@@ -166,7 +161,6 @@ public class HttpClient {
         
         public MySSLConnectionSocketFactory(SSLContext sslContext) {
 			super(sslContext);
-			// TODO Auto-generated constructor stub
 		}
         
 		@Override

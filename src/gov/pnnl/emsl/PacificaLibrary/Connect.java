@@ -1,7 +1,8 @@
 package gov.pnnl.emsl.PacificaLibrary;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import gov.pnnl.emsl.SWADL.File;
 import gov.pnnl.emsl.SWADL.Group;
@@ -9,7 +10,6 @@ import gov.pnnl.emsl.SWADL.UploadHandle;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,11 +23,8 @@ import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,7 +46,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicNameValuePair;
@@ -60,9 +56,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import com.google.gson.Gson;
-import com.google.gson.internal.LinkedTreeMap;
 
 /**
  * Main connect object that integrates all other classes to communicate with the
@@ -254,7 +247,6 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
      * the name of the file and the auth token to get the file. That's why
      * a list of triples are returned.
      * 
-     * TODO: update this method to use elastic search query engine.
      * 
      * @param groups Metadata groups to query the server.
      * @return list of triples of itemid, file name and authentication.
@@ -281,43 +273,68 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
     	json.replace("@@QUERY@@", query);
     	HttpResponse resp = client.post(new StringEntity(json), new URI(config.queryurl()), "application/json");
     	String outputJson = this.read_http_entity(resp.getEntity());
-    	Gson gson = new Gson();
+    	JsonParser jsonParser = new JsonParser();
     	System.out.println(outputJson);
-    	Map<String,Object> foo = gson.fromJson(outputJson, new LinkedTreeMap<String,String>().getClass());
-    	Map<String,Object> hits = (LinkedTreeMap<String,Object>)foo.get("hits");
-    	List<Map<String,Object>> mhits = (List<Map<String,Object>>)hits.get("hits");
-    	String authtoken = (String)foo.get("myemsl_auth_token");
-    	class ItemIDComparator implements Comparator<Map<String,Object>> {
+    	JsonElement firstHits = jsonParser.parse(outputJson);
+    	assert firstHits.isJsonObject();
+    	JsonElement nextHits = firstHits.getAsJsonObject().get("hits");
+    	assert firstHits.getAsJsonObject().get("myemsl_auth_token").isJsonPrimitive();
+    	String authtoken = firstHits.getAsJsonObject().get("myemsl_auth_token").getAsString();
+    	class ItemIDComparator implements Comparator<File> {
     	    @Override
-    	    public int compare(Map<String,Object> a, Map<String,Object> b) {
-    	    	Integer x,y;
-    	    	String idA = (String)a.get("_id");
-    	    	String idB = (String)b.get("_id");
-    	    	x = Integer.parseInt(idA);
-    	    	y = Integer.parseInt(idB);
-    	        return x.compareTo(y);
+    	    public int compare(File a, File b) {
+    	    	Integer x = null;
+    	    	Integer y = null;
+    	    	try {
+    	    		x = ((gov.pnnl.emsl.PacificaLibrary.FileAuthInfo)a.getAuthInfo()).itemID;
+    	    		y = ((gov.pnnl.emsl.PacificaLibrary.FileAuthInfo)b.getAuthInfo()).itemID;
+    	    	} catch (Exception ex) {}
+    	    	return x.compareTo(y);
     	    }
     	}
-    	Collections.sort(mhits, new ItemIDComparator());
-    	for(Map<String,Object> item: mhits)
+    	for(JsonElement item: nextHits.getAsJsonArray())
     	{
-    		Map<String,Object> source = (LinkedTreeMap<String,Object>)item.get("_source");
-		if(isSubSet(source, groups)) {
-    			String filename = (String)source.get("filename");
-    			Integer itemid = Integer.parseInt((String)item.get("_id"));
+    		assert item.isJsonObject();
+    		JsonElement source = item.getAsJsonObject().get("_source");
+    		if(isSubSet(groups, source.getAsJsonObject())) {
+    			String filename = source.getAsJsonObject().get("filename").getAsString();
+    			Integer itemid = Integer.parseInt(item.getAsJsonObject().get("_id").getAsString());
         		ret.add(new FileMetaData(filename, null, null, new FileAuthInfo(itemid, filename, authtoken)));
-		}
+    		}
     	}
+    	Collections.sort(ret, new ItemIDComparator());
     	return ret;
     }
 
-    private boolean isSubSet(Map<String,Object> source, List<Group> groups) throws Exception {
+    private boolean isSubSet(List<Group> groups, JsonObject source) throws Exception {
         Set<String> a = new TreeSet<String>();
         Set<String> b = new TreeSet<String>();
-        return false;
+        for(Group g: groups) {
+        	a.add(g.getKey()+"="+g.getValue());
+        }
+        recParseJson("", source, b);
+        return b.contains(a);
     }
 
-    public List<File> query_old(List<Group> groups) throws Exception {
+    private void recParseJson(String prefix, JsonElement source, Set<String> b) {
+		if(source.isJsonArray()) {
+			for(JsonElement j: source.getAsJsonArray()) {
+				recParseJson(prefix, j, b);
+			}
+		} else if(source.isJsonObject()) {
+			for(Map.Entry<String, JsonElement> j: source.getAsJsonObject().entrySet()){
+				if(prefix.equals("")) {
+					recParseJson(j.getKey(), j.getValue(), b);
+				} else {
+					recParseJson(prefix+"."+j.getKey(), j.getValue(), b);
+				}
+			}
+		} else if(source.isJsonPrimitive()) {
+			b.add(prefix+"="+source.getAsString());
+		}
+	}
+
+	public List<File> query_old(List<Group> groups) throws Exception {
         String url = config.queryurl();
         for(Group g: groups) {
             url += "/group/"+g.getKey()+"/"+g.getValue();
