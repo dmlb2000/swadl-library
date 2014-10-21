@@ -30,6 +30,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -309,7 +311,7 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
     	return ret;
     }
 
-    private boolean isSubSet(Map<String,Object> source, List<Groups> groups) throws Exception {
+    private boolean isSubSet(Map<String,Object> source, List<Group> groups) throws Exception {
         Set<String> a = new TreeSet<String>();
         Set<String> b = new TreeSet<String>();
         return false;
