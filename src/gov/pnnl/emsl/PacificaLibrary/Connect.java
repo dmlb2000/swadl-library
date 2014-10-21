@@ -15,11 +15,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -44,15 +42,10 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -280,6 +273,7 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
     	JsonElement nextHits = firstHits.getAsJsonObject().get("hits");
     	assert firstHits.getAsJsonObject().get("myemsl_auth_token").isJsonPrimitive();
     	String authtoken = firstHits.getAsJsonObject().get("myemsl_auth_token").getAsString();
+    	JsonElement lastHits = nextHits.getAsJsonObject().get("hits");
     	class ItemIDComparator implements Comparator<File> {
     	    @Override
     	    public int compare(File a, File b) {
@@ -292,7 +286,7 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
     	    	return x.compareTo(y);
     	    }
     	}
-    	for(JsonElement item: nextHits.getAsJsonArray())
+    	for(JsonElement item: lastHits.getAsJsonArray())
     	{
     		assert item.isJsonObject();
     		JsonElement source = item.getAsJsonObject().get("_source");
@@ -333,74 +327,6 @@ public class Connect implements gov.pnnl.emsl.SWADL.SWADL {
 			b.add(prefix+"="+source.getAsString());
 		}
 	}
-
-	public List<File> query_old(List<Group> groups) throws Exception {
-        String url = config.queryurl();
-        for(Group g: groups) {
-            url += "/group/"+g.getKey()+"/"+g.getValue();
-        }
-        url += "/data";
-        String args = "auth";
-        System.out.println(url);
-        List<File> files = new ArrayList<File>();
-        this.getrec(files, new URL(url), args);
-        return files;
-    }
-
-    private void getrec(List<File> files, URL url, String args) throws Exception {
-        for(URL d: this.getdirs(url, args))
-            this.getrec(files, d, args);
-        files.addAll(this.getfiles(url, args));
-    }
-
-    private ArrayList<URL> getdirs(URL url, String args) throws Exception {
-        ArrayList<URL> ret = new ArrayList<URL>();
-        NodeList nodeList = getxpath(url, "/myemsl-readdir/dir/@name", args);
-        for(int i=0; i<nodeList.getLength(); i++)
-        {
-            Node childNode = nodeList.item(i);
-            ret.add(new URL(url.toString() + "/"+ childNode.getNodeValue()));
-        }
-        return ret;
-    }
-
-    private List<File> getfiles(URL url, String args) throws Exception {
-        List<File> ret = new ArrayList<File>();
-        String xml = getxml_from_url(url, args);
-        NodeList nodeList = getxpath_from_xml(xml, "/myemsl-readdir/file");
-        for(int i=0; i < nodeList.getLength(); i++) {
-            Node childNode = nodeList.item(i);
-            NamedNodeMap attrs = childNode.getAttributes();
-            System.out.println(url.toString());
-            String filename = url.toString().substring(url.toString().indexOf("/data")+5, url.toString().length());
-            Integer itemid = new Integer(attrs.getNamedItem("itemid").getNodeValue());
-            filename += "/"+attrs.getNamedItem("name").getNodeValue();
-            Integer authidx = new Integer(attrs.getNamedItem("authidx").getNodeValue());
-            NodeList authtlist = getxpath_from_xml(xml, "/myemsl-readdir/auth/token");
-            Node authNode = authtlist.item(authidx);
-            String authtoken = authNode.getFirstChild().getNodeValue();
-            ret.add(new FileMetaData(filename, null, null, new FileAuthInfo(itemid, filename, authtoken)));
-        }
-        return ret;
-    }
-
-    private NodeList getxpath(URL url, String xpath, String args) throws Exception {
-        return this.getxpath_from_xml(this.getxml_from_url(url, args), xpath);
-    }
-
-    private String getxml_from_url(URL url, String args) throws Exception {
-        List <NameValuePair> nvps = new ArrayList <NameValuePair>();
-        nvps.add(new BasicNameValuePair(args, ""));
-        HttpResponse response = client.post(new UrlEncodedFormEntity(nvps, HTTP.UTF_8), url.toURI(), null);
-        return this.read_http_entity(response.getEntity());
-    }
-
-    private NodeList getxpath_from_xml(String xml, String xpath) throws SAXException, XPathExpressionException, UnsupportedEncodingException, IOException {
-        Document doc = this.db.parse(new ByteArrayInputStream(xml.getBytes("UTF-8")));
-        XPathExpression query_xpath = this.xPath.compile(xpath);
-        NodeList nodeList = (NodeList)query_xpath.evaluate(doc, XPathConstants.NODESET);
-        return nodeList;
-    }
 
     /**
      * This method should pull a particular file from the server and download it
