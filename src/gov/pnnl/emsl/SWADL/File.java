@@ -2,6 +2,7 @@ package gov.pnnl.emsl.SWADL;
 
 
 import java.util.List;
+
 import gov.pnnl.emsl.SWADL.Group;
 
 /**

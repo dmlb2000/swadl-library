@@ -1,7 +1,5 @@
 package gov.pnnl.emsl.iRODS;
 
-import junit.framework.Assert;
-
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,10 +57,6 @@ public class Connect implements SWADL {
 		return l;
 	}
 	
-	private String latestTransactionCollection() throws Exception {
-		return config.getPrefix()+"/"+this.latestTransaction().toString();
-	}
-	
 	/*
 	 * pick a location in iRODS to put files.
 	 */
@@ -94,7 +88,7 @@ public class Connect implements SWADL {
 
 	@Override
 	public void uploadWait(UploadHandle h) throws Exception {
-		// TODO Auto-generated method stub
+		return;
 
 	}
 
@@ -141,7 +135,6 @@ public class Connect implements SWADL {
 
 	@Override
 	public void getFile(Writer out, File file) throws Exception {
-		// TODO Auto-generated method stub
 		gov.pnnl.emsl.iRODS.File myFile = (gov.pnnl.emsl.iRODS.File) file;
 		IRODSFileFactory ff = this.irodsAccessObjectFactory.getIRODSFileFactory(this.account);
 		IRODSFile f = ff.instanceIRODSFile(myFile.getCollName()+"/"+myFile.getDataName());
@@ -159,17 +152,15 @@ public class Connect implements SWADL {
 
 	@Override
 	public void logout() throws Exception {
-		// TODO Auto-generated method stub
 		irodsFileSystem.close(account);
 	}
 
 	@Override
 	public void login(String username, String password) throws Exception {
-		// TODO Auto-generated method stub
 		System.out.println(username+","+password+","+this.config.getZone());
 		this.account = IRODSAccount.instance(this.config.getHost(), this.config.getPort(), username, password, "/"+this.config.getZone()+"/home/"+username, this.config.getZone(), this.config.getResource());
 		AuthResponse resp =  irodsAccessObjectFactory.authenticateIRODSAccount(this.account);
-		Assert.assertNotNull("no auth response", resp);
+		assert resp != null;
 	}
 
 }
