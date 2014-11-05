@@ -25,13 +25,38 @@ import gov.pnnl.emsl.SWADL.Group;
 import gov.pnnl.emsl.SWADL.SWADL;
 import gov.pnnl.emsl.SWADL.UploadHandle;
 
+/**
+ * @author dmlb2000
+ *
+ * This object should implement the SWADL interface and should
+ * translate that interface to iRODS API.
+ */
 public class Connect implements SWADL {
 
+	/**
+	 * Internal Library Configuration State
+	 */
 	private LibraryConfiguration config;
+	/**
+	 * User authentication object for iRODS
+	 */
 	private IRODSAccount account;
+	/**
+	 * Interface to get iRODS files
+	 */
 	private IRODSAccessObjectFactory irodsAccessObjectFactory;
+	/**
+	 * Interface to get iRODS query
+	 */
 	private IRODSFileSystem irodsFileSystem;
 	
+	/**
+	 * @param config
+	 * @throws Exception
+	 * 
+	 * Constructor should set internal state of config and initialize
+	 * appropriate internal objects.
+	 */
 	public Connect(LibraryConfiguration config) throws Exception {
 		this.config = config;
 		this.config.setPrefix("/"+config.getZone()+"/SWADL");
@@ -40,6 +65,16 @@ public class Connect implements SWADL {
 		this.irodsAccessObjectFactory = irodsFileSystem.getIRODSAccessObjectFactory();
 	}
 	
+	/**
+	 * @return transaction ID
+	 * @throws Exception
+	 * 
+	 * SWADL interface requires that no data be deleted. This means
+	 * that data should be prefixed by a string with a transaction
+	 * identifier of some kind. This generates and saves a unique
+	 * identifier and returns the next one.
+	 * 
+	 */
 	private Integer latestTransaction() throws Exception {
 		IRODSFileFactory ff = this.irodsAccessObjectFactory.getIRODSFileFactory(this.account);
 		IRODSFile prefix = ff.instanceIRODSFile(config.getPrefix());
@@ -57,8 +92,13 @@ public class Connect implements SWADL {
 		return l;
 	}
 	
-	/*
-	 * pick a location in iRODS to put files.
+	/**
+	 * @return path to the new collection
+	 * @throws Exception
+	 * 
+	 * Generate a new iRODS collection (directory) based on the new
+	 * identifier returned by latestTransaction().
+	 * 
 	 */
 	private String generateTransactionCollection() throws Exception {
 		Integer t = latestTransaction();
