@@ -10,6 +10,12 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+/**
+ * @author dmlb2000
+ *
+ * This is the JSON serializer for a Pacifica group as the key
+ * and value need to be converted to name and type in pacifica
+ */
 public class PacificaGroupSerializer implements JsonSerializer<Group> {
 
 	@Override

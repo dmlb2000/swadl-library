@@ -4,6 +4,12 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+/**
+ * @author dmlb2000
+ *
+ * Perform some tests to make sure strings go in and out of the class
+ * properly.
+ */
 public class FileTest {
 	@Test
 	public void test() throws Exception {

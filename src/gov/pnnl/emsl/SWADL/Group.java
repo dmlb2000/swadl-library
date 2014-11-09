@@ -31,20 +31,23 @@ public class Group {
         this.value = value;
     }
 
-    /* (non-Javadoc)
-     * @see gov.pnnl.emsl.SWADL.Group#getKey()
+    /**
+     * @return key
      */
     public String getKey() { return this.key; }
-    /* (non-Javadoc)
-     * @see gov.pnnl.emsl.SWADL.Group#getValue()
+
+    /**
+     * @return value
      */
     public String getValue() { return this.value; }
-    /* (non-Javadoc)
-     * @see gov.pnnl.emsl.SWADL.Group#setKey(java.lang.String)
+
+    /**
+     * @param key
      */
     public void setKey(String k) { this.key = k; }
-    /* (non-Javadoc)
-     * @see gov.pnnl.emsl.SWADL.Group#setValue(java.lang.String)
+
+    /**
+     * @param value
      */
     public void setValue(String v) { this.value = v; }
 }

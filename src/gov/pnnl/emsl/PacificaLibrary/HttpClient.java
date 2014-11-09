@@ -40,6 +40,15 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.HttpContext;
 
+/**
+ * @author dmlb2000
+ *
+ * Backend HTTP client to access Pacifica
+ * Requires http basic authentication
+ * Supports optional http socks proxy
+ * Requires HTTPS with properly signed certificate in "resources/my.keystore"
+ * Supports PUT/POST/GET HTTP methods
+ */
 public class HttpClient {
 	CloseableHttpClient httpclient;
 	KeyStore trustStore;
@@ -52,6 +61,20 @@ public class HttpClient {
 	HttpClientContext context;
 	CredentialsProvider credsProvider;
 	boolean useProxy;
+	/**
+	 * @param username
+	 * @param password
+	 * @param useProxy
+	 * @throws Exception
+	 * 
+	 * client constructor requires username and password for basic auth
+	 * This constructor needs to do a lot as HTTP communication in Java is complicated
+	 *  - setup SSL socket connection with proper keystore located with library
+	 *  - setup some internal classes if we are using a proxy
+	 *  - also make sure we are sending authentication information every time
+	 *    since we know the server will ask for it every time anyway
+	 *  - setup cookie since sessions are tracked that way
+	 */
 	public HttpClient(String username, String password, boolean useProxy) throws Exception {
 		cookieStore = new BasicCookieStore();
 		reg = RegistryBuilder.<ConnectionSocketFactory>create()
@@ -101,17 +124,41 @@ public class HttpClient {
 		setupCookie();
 	}
 	
+	/**
+	 * @throws Exception
+	 * 
+	 * Setup socks proxy info if you are using this you should change these values as they aren't pulled from anywhere
+	 * This is mainly a convenience function for testing.
+	 */
 	public void setupProxy() throws Exception {
 		if(useProxy){
 			InetSocketAddress socksaddr = new InetSocketAddress(InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }), 8000);
 			context.setAttribute("socks.address", socksaddr);
 		}
 	}
+	/**
+	 * @param entity
+	 * @param location
+	 * @return HttpResponse
+	 * @throws Exception
+	 * 
+	 * setup an http put call and execute it given a URL and an entity to push
+	 */
 	public CloseableHttpResponse put(HttpEntity entity, URI location) throws Exception {
 		HttpPut httpput = new HttpPut(location);
 		httpput.setEntity(entity);
 		return httpclient.execute(httpput, context);
 	}
+	/**
+	 * @param entity
+	 * @param location
+	 * @param acceptType
+	 * @return HttpResponse
+	 * @throws Exception
+	 * 
+	 * setup an http post and execute it given a URL and an entity to post
+	 * This has an optional header to accept data of a given type
+	 */
 	public CloseableHttpResponse post(HttpEntity entity, URI location, String acceptType) throws Exception {
 		HttpPost httppost = new HttpPost(location);
 		httppost.setEntity(entity);
@@ -121,15 +168,32 @@ public class HttpClient {
 		return httpclient.execute(httppost, context);
 	}
 	
+	/**
+	 * @param location
+	 * @return HttpResponse
+	 * @throws Exception
+	 * 
+	 * setup an http get and execute it given the URL
+	 */
 	public CloseableHttpResponse get(URI location) throws Exception { 
 		HttpGet httpget = new HttpGet(location);
 		return httpclient.execute(httpget, context);
 	}
 	
+	/**
+	 * setup an http cookie for the context
+	 */
 	private void setupCookie() {
 		this.context.setCookieStore(cookieStore);
 	}
 
+	/**
+	 * @author dmlb2000
+	 *
+	 * Internal class for proxy dns resolution should fake a resolution
+	 * to an invalid address this lets the rest of the stack use the
+	 * resolution stack through the proxy
+	 */
 	static class FakeDnsResolver implements DnsResolver {
 	    @Override
 	    public InetAddress[] resolve(String host) throws UnknownHostException {
@@ -138,6 +202,12 @@ public class HttpClient {
 	    }
 	}
 	
+    /**
+     * @author dmlb2000
+     * 
+     * Internal class for setting up http connections if we should ever support them
+     * This also allows for proxy connections
+     */
     static class MyConnectionSocketFactory extends PlainConnectionSocketFactory {
 
         @Override
@@ -156,6 +226,11 @@ public class HttpClient {
             return super.connectSocket(connectTimeout, socket, host, unresolvedRemote, localAddress, context);
         }
     }
+    /**
+     * @author dmlb2000
+     *
+     * The SSL version of the MyConnectionSocketFactory and also supports proxy connections
+     */
     static class MySSLConnectionSocketFactory extends SSLConnectionSocketFactory {
 
         

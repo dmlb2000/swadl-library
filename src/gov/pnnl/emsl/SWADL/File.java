@@ -24,12 +24,30 @@ public class File {
 	public String getName() throws Exception {
 		return this.fileName;
 	}
+	/**
+	 * @param filename
+	 * @throws Exception
+	 * 
+	 * Set the file name 
+	 */
 	public void setName(String filename) throws Exception {
 		this.fileName = filename;
 	}
+	/**
+	 * @return
+	 * @throws Exception
+	 * 
+	 * get the name of the file on the local file system
+	 */
 	public String getLocalName() throws Exception {
 		return this.localFilePath;
 	}
+	/**
+	 * @param filename
+	 * @throws Exception
+	 * 
+	 * set the name of the file on the local file system
+	 */
 	public void setLocalName(String filename) throws Exception {
 		this.localFilePath = filename;
 	}
